@@ -23,8 +23,10 @@ import java.time.LocalDate;
  */
 public class FirstUnoContact {
     private static final String DESKTOP_SERVICE = "com.sun.star.frame.Desktop";
+    private static final String PATH = FirstUnoContact.class.getClassLoader()
+            .getResource("templates/prot-VT-UT-template.ods").getFile();
     private static final String SPREADSHEET_COMPONENT_URL = "private:factory/scalc";
-    private static final String SPREADSHEET_DOC_URL = "file:///home/lvg/tmp/openoffice-test/tmp.ods";
+    private static final String SPREADSHEET_DOC_URL = "file:///"+PATH;
     private static final String BLANK_STR = "_blank";
     private static final String DEFAULT_SHEET_NAME = "MySheet";
 
@@ -36,7 +38,7 @@ public class FirstUnoContact {
         FirstUnoContact fuc = new FirstUnoContact();
         try{
             
-            XSpreadsheet xSpreadsheet = fuc.getSpreadSheetByURLAndName(SPREADSHEET_DOC_URL,DEFAULT_SHEET_NAME,new PropertyValue[0]);
+            /*XSpreadsheet xSpreadsheet = fuc.getSpreadSheetByURLAndName(SPREADSHEET_DOC_URL,DEFAULT_SHEET_NAME,new PropertyValue[0]);
             XCell xCell = xSpreadsheet.getCellByPosition(0, 0);
             xCell.setValue(24);
 
@@ -56,6 +58,7 @@ public class FirstUnoContact {
                     UnoRuntime.queryInterface(XSpreadsheetView.class,
                             xSpreadsheetController);
             xSpreadsheetView.setActiveSheet(xSpreadsheet);
+*/
 
             fuc.getDataFromXlsx("");
 
@@ -64,7 +67,7 @@ public class FirstUnoContact {
             ex.printStackTrace();
         }
         finally {
-           // System.exit(0);
+            System.exit(0);
         }
     }
 
@@ -109,10 +112,12 @@ public class FirstUnoContact {
         propertyValues[0] = new PropertyValue();
         propertyValues[0].Name = "Hidden";
         propertyValues[0].Value = Boolean.TRUE;
+        String pathToXlsx = FirstUnoContact.class.getClassLoader().getResource("templates/shipping-table.xlsx")
+                .getPath();
+        System.out.println("Path to xls[ file is: "+pathToXlsx);
         try{
             XSpreadsheet xSpreadsheet =
-                    getSpreadSheetByURLAndName("file:///home/lvg/tmp/openoffice-test/Сводная таблица отгрузок.xlsx",
-                            "Ноябрь", propertyValues);
+                    getSpreadSheetByURLAndName("file://"+pathToXlsx,"Ноябрь", propertyValues);
             XCell xCell = xSpreadsheet.getCellByPosition(2,2);
             System.out.println("Date is: " + xCell.getValue());
             LocalDate startDate = LocalDate.of(1899,12,30);

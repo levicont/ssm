@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="openoffice-classes">
+    <CLASSES>
+      <root url="file:///opt/openoffice4/program/classes" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file:///opt/openoffice4/program/classes" recursive="false" />
+  </library>
+</component>
