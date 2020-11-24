@@ -6,7 +6,9 @@ import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
+import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
@@ -17,6 +19,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 15.11.2020.
@@ -61,6 +64,16 @@ public class FirstUnoContact {
 */
 
             fuc.getDataFromXlsx("");
+            fuc.xSpreadsheetComponent.dispose();
+            List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
+            shipmentEntities.forEach(shipmentEntity -> {
+                System.out.println(shipmentEntity.getDate());
+                System.out.println(shipmentEntity.getTechnicalDrawings());
+                System.out.println(shipmentEntity.getObjectName());
+                System.out.println(shipmentEntity.getShippingShop());
+                shipmentEntity.getDetailEntities().forEach(System.out::println);
+                System.out.println();
+            });
 
 
         }catch (Exception ex){

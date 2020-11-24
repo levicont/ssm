@@ -11,4 +11,6 @@ public class OpenOfficeUtils {
     public static LocalDate getLocalDateFromDoubleValue(double value){
         return DEFAULT_START_DATE.plusDays((long)value);
     }
+
+
 }

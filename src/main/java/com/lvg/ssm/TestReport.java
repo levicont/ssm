@@ -39,6 +39,38 @@ public class TestReport {
         private Condition condition = Condition.FIT;
         private String comments;
 
+        public AppendixEntity(String workingDrawings, String position, String positionName, Integer amount, Condition condition, String comments) {
+            this.workingDrawings = workingDrawings;
+            this.position = position;
+            this.positionName = positionName;
+            this.amount = amount;
+            this.condition = condition;
+            this.comments = comments;
+        }
+
+        public String getWorkingDrawings() {
+            return workingDrawings;
+        }
+
+        public String getPosition() {
+            return position;
+        }
+
+        public String getPositionName() {
+            return positionName;
+        }
+
+        public Integer getAmount() {
+            return amount;
+        }
+
+        public Condition getCondition() {
+            return condition;
+        }
+
+        public String getComments() {
+            return comments;
+        }
     }
 
     private enum Condition{
