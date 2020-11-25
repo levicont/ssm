@@ -3,6 +3,7 @@ package com.lvg.ssm;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 20.11.2020.
@@ -31,7 +32,15 @@ public class TestReport {
     private String getNdtSpecialistCert = "Сертификат № 614 VT.03.2016";
     private List<AppendixEntity> appendixEntities = new ArrayList<>();
 
-    private class AppendixEntity{
+    public TestReport(){}
+
+    public TestReport(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> journalWeldingEntities){
+        this.date = shipmentEntity.getDate();
+        this.workingDrawings = shipmentEntity.getTechnicalDrawings();
+
+    }
+
+    public class AppendixEntity{
         private String workingDrawings;
         private String position;
         private String positionName;
@@ -73,6 +82,187 @@ public class TestReport {
         }
     }
 
+    private String getWorkingDrawings(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> list){
+        String result = "";
+        return "";
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getTestObject() {
+        return testObject;
+    }
+
+    public void setTestObject(String testObject) {
+        this.testObject = testObject;
+    }
+
+    public String getWorkingDrawings() {
+        return workingDrawings;
+    }
+
+    public void setWorkingDrawings(String workingDrawings) {
+        this.workingDrawings = workingDrawings;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public String getGeometricSize() {
+        return geometricSize;
+    }
+
+    public void setGeometricSize(String geometricSize) {
+        this.geometricSize = geometricSize;
+    }
+
+    public String getWeldJoinId() {
+        return weldJoinId;
+    }
+
+    public void setWeldJoinId(String weldJoinId) {
+        this.weldJoinId = weldJoinId;
+    }
+
+    public String getWelder() {
+        return welder;
+    }
+
+    public void setWelder(String welder) {
+        this.welder = welder;
+    }
+
+    public String getWelderEng() {
+        return welderEng;
+    }
+
+    public void setWelderEng(String welderEng) {
+        this.welderEng = welderEng;
+    }
+
+    public String getWelderMark() {
+        return welderMark;
+    }
+
+    public void setWelderMark(String welderMark) {
+        this.welderMark = welderMark;
+    }
+
+    public String getWelderMarkEng() {
+        return welderMarkEng;
+    }
+
+    public void setWelderMarkEng(String welderMarkEng) {
+        this.welderMarkEng = welderMarkEng;
+    }
+
+    public String getWeldTechnology() {
+        return weldTechnology;
+    }
+
+    public void setWeldTechnology(String weldTechnology) {
+        this.weldTechnology = weldTechnology;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public String getControlValue() {
+        return controlValue;
+    }
+
+    public void setControlValue(String controlValue) {
+        this.controlValue = controlValue;
+    }
+
+    public String getTestObjectOrigin() {
+        return testObjectOrigin;
+    }
+
+    public void setTestObjectOrigin(String testObjectOrigin) {
+        this.testObjectOrigin = testObjectOrigin;
+    }
+
+    public String getDefectFounds() {
+        return defectFounds;
+    }
+
+    public void setDefectFounds(String defectFounds) {
+        this.defectFounds = defectFounds;
+    }
+
+    public String getConclusions() {
+        return conclusions;
+    }
+
+    public void setConclusions(String conclusions) {
+        this.conclusions = conclusions;
+    }
+
+    public String getLaboratoryHead() {
+        return laboratoryHead;
+    }
+
+    public void setLaboratoryHead(String laboratoryHead) {
+        this.laboratoryHead = laboratoryHead;
+    }
+
+    public String getLaboratoryHeadCert() {
+        return laboratoryHeadCert;
+    }
+
+    public void setLaboratoryHeadCert(String laboratoryHeadCert) {
+        this.laboratoryHeadCert = laboratoryHeadCert;
+    }
+
+    public String getNdtSpecialist() {
+        return ndtSpecialist;
+    }
+
+    public void setNdtSpecialist(String ndtSpecialist) {
+        this.ndtSpecialist = ndtSpecialist;
+    }
+
+    public String getGetNdtSpecialistCert() {
+        return getNdtSpecialistCert;
+    }
+
+    public void setGetNdtSpecialistCert(String getNdtSpecialistCert) {
+        this.getNdtSpecialistCert = getNdtSpecialistCert;
+    }
+
+    public List<AppendixEntity> getAppendixEntities() {
+        return appendixEntities;
+    }
+
+    public void setAppendixEntities(List<AppendixEntity> appendixEntities) {
+        this.appendixEntities = appendixEntities;
+    }
+
     private enum Condition{
         FIT(" годен / fit"), UNFIT("не годен / unfit");
 
@@ -91,6 +281,8 @@ public class TestReport {
             return this.value;
         }
     }
+
+
 
 
 

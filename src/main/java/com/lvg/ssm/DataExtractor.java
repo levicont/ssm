@@ -26,7 +26,8 @@ public class DataExtractor {
     private static final String BLANK_STR = "_blank";
     private static final String SHIPPING_TABLE_PATH = "file://"+DataExtractor.class
             .getClassLoader().getResource("templates/shipping-table.xlsx").getPath();
-
+    private static final String JOURNAL_TABLE_PATH = "file://"+DataExtractor.class
+            .getClassLoader().getResource("templates/welding-journals.xlsx").getPath();
 
 
 
@@ -138,6 +139,61 @@ public class DataExtractor {
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
+    }
+
+    public static List<JournalWeldingEntity> getJournalWeldingEntities(){
+        List<JournalWeldingEntity> result = new ArrayList<>();
+        XSpreadsheets xSpreadsheets = getSpreadsheets(JOURNAL_TABLE_PATH,getHiddenAsTemplateProperties());
+
+        try {
+            Object sheet = xSpreadsheets.getByName(xSpreadsheets.getElementNames()[0]);
+            XSpreadsheet xSpreadsheet = UnoRuntime.queryInterface(XSpreadsheet.class, sheet);
+
+            int startRow = 5;
+            int emptyRowsCount = 0;
+
+            while(emptyRowsCount <2){
+                String firstCellValue = xSpreadsheet.getCellByPosition(0,startRow).getFormula();
+                if(firstCellValue.isEmpty()){
+                    emptyRowsCount++;
+                    continue;
+                }else{
+                    result.add(getJournalWeldingEntityFromTableRow(startRow,xSpreadsheet));
+                    startRow++;
+                    emptyRowsCount=0;
+                }
+            }
+            result.forEach(System.out::println);
+            return result;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+
+    }
+
+    private static JournalWeldingEntity getJournalWeldingEntityFromTableRow(int row, XSpreadsheet xSpreadsheet){
+        JournalWeldingEntity entity = new JournalWeldingEntity();
+        try {
+            entity.setNumber(xSpreadsheet.getCellByPosition(0, row).getFormula());
+            entity.setObjectName(xSpreadsheet.getCellByPosition(1, row).getFormula());
+            entity.setObjectAddress(xSpreadsheet.getCellByPosition(2, row).getFormula());
+            entity.setCustomer(xSpreadsheet.getCellByPosition(3, row).getFormula());
+            entity.setContractNumberProduction(xSpreadsheet.getCellByPosition(4, row).getFormula());
+            entity.setProjectDeveloper(xSpreadsheet.getCellByPosition(5, row).getFormula());
+            entity.setWorkingDrawings(xSpreadsheet.getCellByPosition(6, row).getFormula());
+            entity.setContractNumberDeveloping(xSpreadsheet.getCellByPosition(7, row).getFormula());
+            entity.setArchiveNumberOfWorkingDrawings(xSpreadsheet.getCellByPosition(8, row).getFormula());
+            entity.setDateOfStartProduction(
+                    OpenOfficeUtils.getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(9, row).getValue()));
+            entity.setDateOfEndProduction(
+                    OpenOfficeUtils.getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(10, row).getValue()));
+            entity.setChangeNotesOfWorkingDrawings(xSpreadsheet.getCellByPosition(11, row).getFormula());
+            entity.setTimeOfKeepingJournal(xSpreadsheet.getCellByPosition(12, row).getFormula());
+
+        }catch(Exception ex){
+            throw new RuntimeException(ex);
+        }
+        return entity;
     }
 
 

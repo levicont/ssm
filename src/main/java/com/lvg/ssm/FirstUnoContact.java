@@ -65,7 +65,7 @@ public class FirstUnoContact {
 
             fuc.getDataFromXlsx("");
             fuc.xSpreadsheetComponent.dispose();
-            List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
+            /*List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
             shipmentEntities.forEach(shipmentEntity -> {
                 System.out.println(shipmentEntity.getDate());
                 System.out.println(shipmentEntity.getTechnicalDrawings());
@@ -74,6 +74,8 @@ public class FirstUnoContact {
                 shipmentEntity.getDetailEntities().forEach(System.out::println);
                 System.out.println();
             });
+            */
+            DataExtractor.getJournalWeldingEntities();
 
 
         }catch (Exception ex){
