@@ -9,6 +9,10 @@ import java.util.Optional;
  * Created by Victor Levchenko LVG Corp. on 20.11.2020.
  */
 public class TestReport {
+
+    public static final String WELDING_JOURNAL_PREFIX_RU = "Журнал* №";
+    public static final String WELDING_JOURNAL_PREFIX_ENG = "Log* #";
+
     private String number;
     private LocalDate date;
     private String testObject = "Сварные соединения деталей Приложение 1   /    Weld joints of details in Appendix 1";
@@ -33,13 +37,9 @@ public class TestReport {
     private List<AppendixEntity> appendixEntities = new ArrayList<>();
 
     public TestReport(){}
-
-    public TestReport(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> journalWeldingEntities){
-        this.date = shipmentEntity.getDate();
-        this.workingDrawings = shipmentEntity.getTechnicalDrawings();
-
+    public TestReport(String number){
+        this.number = number;
     }
-
     public class AppendixEntity{
         private String workingDrawings;
         private String position;
@@ -80,11 +80,6 @@ public class TestReport {
         public String getComments() {
             return comments;
         }
-    }
-
-    private String getWorkingDrawings(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> list){
-        String result = "";
-        return "";
     }
 
     public String getNumber() {
@@ -263,7 +258,7 @@ public class TestReport {
         this.appendixEntities = appendixEntities;
     }
 
-    private enum Condition{
+    public enum Condition{
         FIT(" годен / fit"), UNFIT("не годен / unfit");
 
         private String value;
@@ -283,7 +278,18 @@ public class TestReport {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        TestReport that = (TestReport) o;
 
+        return number.equals(that.number);
+    }
 
+    @Override
+    public int hashCode() {
+        return number.hashCode();
+    }
 }

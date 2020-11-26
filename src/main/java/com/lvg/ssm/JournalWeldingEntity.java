@@ -140,4 +140,5 @@ public class JournalWeldingEntity {
                 "changeNotesOfWorkingDrawings='" + changeNotesOfWorkingDrawings + "\'\t\t\t" +
                 "timeOfKeepingJournal='" + timeOfKeepingJournal + '\'';
     }
+
 }
