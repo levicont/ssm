@@ -6,6 +6,7 @@ import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.uno.UnoRuntime;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +37,8 @@ public class Filler {
             XSpreadsheets xSpreadsheets = getSpreadsheets(PROTOCOL_TAMPLATE_PATH, props);
             Object sheet = xSpreadsheets.getByName(xSpreadsheets.getElementNames()[0]);
             XSpreadsheet xSpreadsheet = UnoRuntime.queryInterface(XSpreadsheet.class, sheet);
-
+            System.out.println("Number: "+ testReport.getNumber());
+            System.out.println("Date: "+ formatDate(testReport.getDate()));
             xSpreadsheet.getCellByPosition(5,9).setFormula(testReport.getNumber());
             xSpreadsheet.getCellByPosition(7,9).setFormula(formatDate(testReport.getDate()));
             xSpreadsheet.getCellByPosition(3, 13).setFormula(testReport.getWorkingDrawings());
@@ -68,7 +70,7 @@ public class Filler {
     }
 
     private static String formatDate(LocalDate date){
-        return ""+date.getDayOfMonth()+'.'+date.getMonthValue()+'.'+date.getYear();
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
 

@@ -31,7 +31,7 @@ public class Combiner  {
     }
 
     private static String getSufixNumber(LocalDate date){
-        return "-" + date.getMonthValue() + '/' + date.getYear();
+        return "-" + date.getMonthValue() + "/" + date.getYear();
     }
 
     private static String getNextNumber(Set<TestReport> testReports, ShipmentEntity shipmentEntity){
@@ -43,7 +43,7 @@ public class Combiner  {
                     equals(new TestReport(""+startNumber+getSufixNumber(shipmentEntity.getDate()))))
             startNumber++;
         }
-        return ""+startNumber+getSufixNumber(shipmentEntity.getDate());
+        return ""+startNumber+""+getSufixNumber(shipmentEntity.getDate());
     }
 
     private static String getJournalNumber(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> journalWeldingEntities){
