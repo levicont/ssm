@@ -145,21 +145,21 @@ public class DataExtractor {
     private static JournalWeldingEntity getJournalWeldingEntityFromTableRow(int row, XSpreadsheet xSpreadsheet){
         JournalWeldingEntity entity = new JournalWeldingEntity();
         try {
-            entity.setNumber(xSpreadsheet.getCellByPosition(0, row).getFormula());
-            entity.setObjectName(xSpreadsheet.getCellByPosition(1, row).getFormula());
-            entity.setObjectAddress(xSpreadsheet.getCellByPosition(2, row).getFormula());
-            entity.setCustomer(xSpreadsheet.getCellByPosition(3, row).getFormula());
-            entity.setContractNumberProduction(xSpreadsheet.getCellByPosition(4, row).getFormula());
-            entity.setProjectDeveloper(xSpreadsheet.getCellByPosition(5, row).getFormula());
-            entity.setWorkingDrawings(xSpreadsheet.getCellByPosition(6, row).getFormula());
-            entity.setContractNumberDeveloping(xSpreadsheet.getCellByPosition(7, row).getFormula());
-            entity.setArchiveNumberOfWorkingDrawings(xSpreadsheet.getCellByPosition(8, row).getFormula());
+            entity.setNumber(getCellTextByPosition(xSpreadsheet,0,row));
+            entity.setObjectName(getCellTextByPosition(xSpreadsheet,1, row));
+            entity.setObjectAddress(getCellTextByPosition(xSpreadsheet, 2, row));
+            entity.setCustomer(getCellTextByPosition(xSpreadsheet,3, row));
+            entity.setContractNumberProduction(getCellTextByPosition(xSpreadsheet,4, row));
+            entity.setProjectDeveloper(getCellTextByPosition(xSpreadsheet,5, row));
+            entity.setWorkingDrawings(getCellTextByPosition(xSpreadsheet,6, row));
+            entity.setContractNumberDeveloping(getCellTextByPosition(xSpreadsheet,7, row));
+            entity.setArchiveNumberOfWorkingDrawings(getCellTextByPosition(xSpreadsheet,8, row));
             entity.setDateOfStartProduction(
                     getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(9, row).getValue()));
             entity.setDateOfEndProduction(
                     getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(10, row).getValue()));
-            entity.setChangeNotesOfWorkingDrawings(xSpreadsheet.getCellByPosition(11, row).getFormula());
-            entity.setTimeOfKeepingJournal(xSpreadsheet.getCellByPosition(12, row).getFormula());
+            entity.setChangeNotesOfWorkingDrawings(getCellTextByPosition(xSpreadsheet,11, row));
+            entity.setTimeOfKeepingJournal(getCellTextByPosition(xSpreadsheet,12, row));
 
         }catch(Exception ex){
             throw new RuntimeException(ex);

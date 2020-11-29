@@ -15,6 +15,7 @@ import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheetView;
 import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.table.XCell;
+import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 

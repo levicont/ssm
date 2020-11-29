@@ -5,10 +5,13 @@ import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
+import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import sun.misc.ExtensionInstallationException;
 
 import java.time.LocalDate;
 
@@ -56,6 +59,15 @@ public class OpenOfficeUtils {
         result[1].Name = "AsTemplate";
         result[1].Value = Boolean.TRUE;
         return result;
+    }
+
+    public static String getCellTextByPosition(XSpreadsheet xSpreadsheet, int column, int row){
+        try {
+            XText text = UnoRuntime.queryInterface(XText.class,xSpreadsheet.getCellByPosition(column,row));
+            return text.getString();
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
 
