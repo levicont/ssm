@@ -1,8 +1,10 @@
 package com.lvg.ssm;
 
 import com.sun.star.beans.PropertyValue;
+import com.sun.star.sheet.XCellRangesQuery;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheets;
+import com.sun.star.table.XCellRange;
 import com.sun.star.uno.UnoRuntime;
 
 import java.time.LocalDate;
@@ -39,8 +41,8 @@ public class Filler {
             XSpreadsheet xSpreadsheet = UnoRuntime.queryInterface(XSpreadsheet.class, sheet);
             System.out.println("Number: "+ testReport.getNumber());
             System.out.println("Date: "+ formatDate(testReport.getDate()));
-            xSpreadsheet.getCellByPosition(5,9).setFormula(testReport.getNumber());
-            xSpreadsheet.getCellByPosition(7,9).setFormula(formatDate(testReport.getDate()));
+            setCellTextByPosition(xSpreadsheet,5,9,testReport.getNumber());
+            setCellTextByPosition(xSpreadsheet,7,9,formatDate(testReport.getDate()));
             xSpreadsheet.getCellByPosition(3, 13).setFormula(testReport.getWorkingDrawings());
             xSpreadsheet.getCellByPosition(8, 17).setFormula(testReport.getWelder());
             xSpreadsheet.getCellByPosition(8, 18).setFormula(testReport.getWelderEng());

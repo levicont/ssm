@@ -52,7 +52,8 @@ public class Combiner  {
             if (entity.getWorkingDrawings().equalsIgnoreCase(shipmentEntity.getTechnicalDrawings()))
                 number.append(entity.getNumber()).append(", ");
         });
-       // number.deleteCharAt(number.length()-2);
+        if (number.length()>2)
+            number.deleteCharAt(number.length()-2);
         return number.toString();
     }
 

@@ -70,5 +70,16 @@ public class OpenOfficeUtils {
         }
     }
 
+    public static void setCellTextByPosition(XSpreadsheet xSpreadsheet, int column, int row, String text){
+        try{
+            XText xText = UnoRuntime.queryInterface(XText.class, xSpreadsheet.getCellByPosition(column, row));
+            xText.setString(text);
+
+
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
 
 }

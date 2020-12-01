@@ -1,17 +1,10 @@
 package com.lvg.ssm;
 
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.comp.helper.Bootstrap;
-import com.sun.star.frame.XComponentLoader;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.sheet.XSpreadsheet;
-import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.table.XCell;
 import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XComponentContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,6 +36,7 @@ public class DataExtractor {
         Arrays.stream(xSpreadsheetsNames).forEach(name ->{
             try {
                 Object sheet = xSpreadsheets.getByName(name);
+
                 XSpreadsheet xSpreadsheet = UnoRuntime.queryInterface(XSpreadsheet.class,sheet);
                 ShipmentEntity shipmentEntity;
                 int row = 0;
@@ -80,9 +74,9 @@ public class DataExtractor {
             ShipmentEntity entity = new ShipmentEntity();
             LocalDate date = getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(2, startRow).getValue());
             entity.setDate(date);
-            entity.setTechnicalDrawings(xSpreadsheet.getCellByPosition(2,startRow+1).getFormula());
-            entity.setObjectName(xSpreadsheet.getCellByPosition(2, startRow+2).getFormula());
-            entity.setShippingShop(xSpreadsheet.getCellByPosition(2, startRow+3).getFormula());
+            entity.setTechnicalDrawings(getCellTextByPosition(xSpreadsheet,2,startRow+1));
+            entity.setObjectName(getCellTextByPosition(xSpreadsheet,2, startRow+2));
+            entity.setShippingShop(getCellTextByPosition(xSpreadsheet,2, startRow+3));
             entity.getDetailEntities().addAll(
                     getDetailEntitiesFromStartRow(xSpreadsheet,entity,startRow+5));
             return entity;
@@ -96,9 +90,9 @@ public class DataExtractor {
         List<ShipmentEntity.DetailEntity> detailEntities = new ArrayList<>();
         try {
             int currentRow = startRow;
-            while ( !xSpreadsheet.getCellByPosition(0, currentRow).getFormula().isEmpty()){
-                String mark = xSpreadsheet.getCellByPosition(0, currentRow).getFormula();
-                String markName = xSpreadsheet.getCellByPosition(1, currentRow).getFormula();
+            while ( !getCellTextByPosition(xSpreadsheet,0, currentRow).isEmpty()){
+                String mark = getCellTextByPosition(xSpreadsheet,0, currentRow);
+                String markName = getCellTextByPosition(xSpreadsheet,1, currentRow);
                 Integer count = (int)xSpreadsheet.getCellByPosition(2, currentRow).getValue();
                 Double weightOfMarkKg = xSpreadsheet.getCellByPosition(3, currentRow).getValue();
                 ShipmentEntity.DetailEntity detailEntity =
@@ -124,7 +118,7 @@ public class DataExtractor {
             int emptyRowsCount = 0;
 
             while(emptyRowsCount <2){
-                String firstCellValue = xSpreadsheet.getCellByPosition(0,startRow).getFormula();
+                String firstCellValue = getCellTextByPosition(xSpreadsheet,0,startRow);
                 if(firstCellValue.isEmpty()){
                     emptyRowsCount++;
                     continue;
