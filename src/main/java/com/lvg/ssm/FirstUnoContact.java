@@ -3,8 +3,10 @@ package com.lvg.ssm;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
+import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
+import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XComponent;
@@ -20,6 +22,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,11 +38,21 @@ public class FirstUnoContact {
     private static final String DEFAULT_SHEET_NAME = "MySheet";
 
     private XComponent xSpreadsheetComponent;
+    private XComponentContext xComponentContext;
+    private XMultiComponentFactory xMultiComponentFactory;
+    private XDesktop xDesktop;
 
+    public FirstUnoContact(){
+        this.xComponentContext = getComponentContext();
+        this.xMultiComponentFactory = getComponentFactory(this.xComponentContext);
+        Arrays.stream(xMultiComponentFactory.getAvailableServiceNames()).forEach(System.out::println);
+        this.xDesktop = getDesktop(this.xComponentContext);
 
+    }
 
     public static void main(String[] args) {
         FirstUnoContact fuc = new FirstUnoContact();
+        fuc.xDesktop.terminate();
         try{
             
             /*XSpreadsheet xSpreadsheet = fuc.getSpreadSheetByURLAndName(SPREADSHEET_DOC_URL,DEFAULT_SHEET_NAME,new PropertyValue[0]);
@@ -64,8 +77,8 @@ public class FirstUnoContact {
             xSpreadsheetView.setActiveSheet(xSpreadsheet);
 */
 
-            fuc.getDataFromXlsx("");
-            fuc.xSpreadsheetComponent.dispose();
+            //fuc.getDataFromXlsx("");
+            //fuc.xSpreadsheetComponent.dispose();
             /*List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
             shipmentEntities.forEach(shipmentEntity -> {
                 System.out.println(shipmentEntity.getDate());
@@ -76,14 +89,11 @@ public class FirstUnoContact {
                 System.out.println();
             });
             */
-            DataExtractor.getJournalWeldingEntities();
+            //DataExtractor.getJournalWeldingEntities();
 
 
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-        finally {
-            System.exit(0);
+        } finally {
+
         }
     }
 
@@ -98,24 +108,44 @@ public class FirstUnoContact {
         }
     }
 
+    private XComponentContext getComponentContext(){
+        try{
+            return Bootstrap.bootstrap();
+        }catch (java.lang.Exception ex){
+            System.err.println("ERROR: Could not bootstrap default Office.");
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private XMultiComponentFactory getComponentFactory(XComponentContext context){
+        try{
+            return context.getServiceManager();
+        }catch (Exception ex){
+            System.err.println("ERROR: Could not get ServiceManager from context");
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private XDesktop getDesktop(XComponentContext xComponentContext){
+        try{
+            Object desktop = xMultiComponentFactory.createInstanceWithContext(DESKTOP_SERVICE,xComponentContext);
+            XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, desktop);
+            return xDesktop;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
     private XSpreadsheetDocument getXSpreadsheetDocumentByURL(String url, PropertyValue[] propertyValues){
         try{
-            XComponentContext xRemoteContext = Bootstrap.bootstrap();
-            if (xRemoteContext == null) {
-                System.err.println("ERROR: Could not bootstrap default Office.");
-            }
-            System.out.println("Connected to a running office ...");
 
-            XMultiComponentFactory xRemoteContextServiceManager = xRemoteContext.getServiceManager();
-            String available = (xRemoteContextServiceManager != null ?"available":"not available");
+            String available = (this.xMultiComponentFactory != null ?"available":"not available");
             System.out.println("Office is "+available);
 
-            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xRemoteContext);
-            XComponentLoader xComponentLoader = (XComponentLoader)
-                    UnoRuntime.queryInterface(XComponentLoader.class,desktop);
+            XComponentLoader xComponentLoader = UnoRuntime.queryInterface(XComponentLoader.class,this.xDesktop);
             this.xSpreadsheetComponent =
                     xComponentLoader.loadComponentFromURL(url,BLANK_STR,0,propertyValues);
-            XSpreadsheetDocument xSpreadsheetDocument = (XSpreadsheetDocument)
+            XSpreadsheetDocument xSpreadsheetDocument =
                     UnoRuntime.queryInterface(XSpreadsheetDocument.class, xSpreadsheetComponent);
             return xSpreadsheetDocument;
         }catch (Exception ex){
