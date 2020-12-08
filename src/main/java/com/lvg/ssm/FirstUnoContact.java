@@ -1,9 +1,11 @@
 package com.lvg.ssm;
 
+import com.sun.star.awt.Point;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.comp.helper.BootstrapException;
+import com.sun.star.container.XIndexAccess;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
@@ -12,11 +14,11 @@ import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.sheet.XSpreadsheet;
-import com.sun.star.sheet.XSpreadsheetDocument;
-import com.sun.star.sheet.XSpreadsheetView;
-import com.sun.star.sheet.XSpreadsheets;
+import com.sun.star.sheet.*;
 import com.sun.star.table.XCell;
+import com.sun.star.table.XCellRange;
+import com.sun.star.table.XColumnRowRange;
+import com.sun.star.table.XTableRows;
 import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -45,14 +47,49 @@ public class FirstUnoContact {
     public FirstUnoContact(){
         this.xComponentContext = getComponentContext();
         this.xMultiComponentFactory = getComponentFactory(this.xComponentContext);
-        Arrays.stream(xMultiComponentFactory.getAvailableServiceNames()).forEach(System.out::println);
         this.xDesktop = getDesktop(this.xComponentContext);
 
     }
 
     public static void main(String[] args) {
         FirstUnoContact fuc = new FirstUnoContact();
-        fuc.xDesktop.terminate();
+        try {
+            XSpreadsheet xSpreadsheet = fuc.getSpreadSheetByURLAndName(SPREADSHEET_COMPONENT_URL, "", null);
+
+            XCell xCell = xSpreadsheet.getCellByPosition(0, 0);
+            xCell.setValue(1d);
+
+            xCell = xSpreadsheet.getCellByPosition(0, 2);
+            xCell.setValue(2d);
+
+            XSheetCellRange xSheetCellRange = UnoRuntime.queryInterface(XSheetCellRange.class,
+                    xSpreadsheet);
+            System.out.println(xSheetCellRange);
+            XColumnRowRange xColumnRowRange = UnoRuntime.queryInterface(XColumnRowRange.class,
+                    xSheetCellRange);
+            XTableRows xTableRows = xColumnRowRange.getRows();
+            int count = xTableRows.getCount();
+            XPropertySet xPropertySet = UnoRuntime.queryInterface(XPropertySet.class,
+                    xTableRows.getByIndex(1));
+            Arrays.stream(xPropertySet.getPropertySetInfo().getProperties())
+                    .forEach(property -> {
+                        System.out.println(property.Name+"\t\t"+property.Type.getTypeName()+
+                        "\t\t");
+
+                    });
+            xPropertySet.setPropertyValue("IsVisible",false);
+            System.out.println("Position: "+ ((Point)xPropertySet.getPropertyValue("Position")).X);
+
+            System.out.println(xTableRows.getByIndex(2));
+            System.out.println("count = "+count);
+
+            XCellRangeMovement xCellRangeMovement = UnoRuntime.queryInterface(XCellRangeMovement.class,
+                    xSpreadsheet);
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        //fuc.xDesktop.terminate();
         try{
             
             /*XSpreadsheet xSpreadsheet = fuc.getSpreadSheetByURLAndName(SPREADSHEET_DOC_URL,DEFAULT_SHEET_NAME,new PropertyValue[0]);
@@ -100,7 +137,16 @@ public class FirstUnoContact {
     private XSpreadsheet getSpreadSheetByURLAndName(String url, String spreadsheetName, PropertyValue[] propertyValues){
         try{
             XSpreadsheets xSpreadsheets = getXSpreadsheetDocumentByURL(url, propertyValues).getSheets();
-            Object sheet = xSpreadsheets.getByName(spreadsheetName);
+            Object sheet;
+            XIndexAccess xIndexAccess;
+            if(!xSpreadsheets.hasByName(spreadsheetName)){
+                xIndexAccess = UnoRuntime.queryInterface(XIndexAccess.class,
+                        xSpreadsheets);
+                sheet = xIndexAccess.getByIndex(0);
+            }else
+                sheet = xSpreadsheets.getByName(spreadsheetName);
+
+
             return (XSpreadsheet)UnoRuntime.queryInterface(XSpreadsheet.class,sheet);
         }catch(Exception ex){
             ex.printStackTrace();
