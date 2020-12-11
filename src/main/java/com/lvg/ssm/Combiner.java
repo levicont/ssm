@@ -23,10 +23,6 @@ public class Combiner  {
             report.getAppendixEntities().addAll(getAppendixEntities(shipmentEntity,report));
             result.add(report);
         });
-
-        result.forEach(testReport -> {
-            System.out.println(testReport);
-        });
         return result;
     }
 
@@ -37,11 +33,10 @@ public class Combiner  {
     private static String getNextNumber(Set<TestReport> testReports, ShipmentEntity shipmentEntity){
         int startNumber = 1;
 
-        Iterator<TestReport> iterator = testReports.iterator();
-        while(iterator.hasNext()){
-            if (iterator.next().
-                    equals(new TestReport(""+startNumber+getSufixNumber(shipmentEntity.getDate()))))
-            startNumber++;
+        for (TestReport testReport : testReports) {
+            if (testReport.
+                    equals(new TestReport("" + startNumber + getSufixNumber(shipmentEntity.getDate()))))
+                startNumber++;
         }
         return ""+startNumber+""+getSufixNumber(shipmentEntity.getDate());
     }
@@ -49,12 +44,18 @@ public class Combiner  {
     private static String getJournalNumber(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> journalWeldingEntities){
         StringBuilder number = new StringBuilder();
         journalWeldingEntities.forEach(entity->{
-            if (entity.getWorkingDrawings().equalsIgnoreCase(shipmentEntity.getTechnicalDrawings()))
+            if (isEqualsKMD(entity.getWorkingDrawings(),shipmentEntity.getTechnicalDrawings()))
                 number.append(entity.getNumber()).append(", ");
         });
         if (number.length()>2)
             number.deleteCharAt(number.length()-2);
         return number.toString();
+    }
+
+    private static boolean isEqualsKMD(String sheepmentKMD, String journalKMD){
+        String normalizeSheepmentKMD = sheepmentKMD.toLowerCase().replace('-',' ');
+        String normalizeJournalKMD = journalKMD.toLowerCase().replace('-',' ');
+        return normalizeJournalKMD.equals(normalizeSheepmentKMD);
     }
 
     private static List<TestReport.AppendixEntity> getAppendixEntities(ShipmentEntity shipmentEntity, TestReport testReport){

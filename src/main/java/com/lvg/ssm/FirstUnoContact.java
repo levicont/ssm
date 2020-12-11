@@ -77,7 +77,10 @@ public class FirstUnoContact {
                         "\t\t");
 
                     });
-            xPropertySet.setPropertyValue("IsVisible",false);
+
+
+            OpenOfficeUtils.hideTableRows(xSpreadsheet,1,1);
+            //xPropertySet.setPropertyValue("IsVisible",false);
             System.out.println("Position: "+ ((Point)xPropertySet.getPropertyValue("Position")).X);
 
             System.out.println(xTableRows.getByIndex(2));

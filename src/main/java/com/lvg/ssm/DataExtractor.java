@@ -1,5 +1,6 @@
 package com.lvg.ssm;
 
+import com.sun.star.lang.XComponent;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.table.XCell;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static com.lvg.ssm.OpenOfficeUtils.*;
 
@@ -19,24 +21,20 @@ import static com.lvg.ssm.OpenOfficeUtils.*;
  */
 public class DataExtractor {
 
-    private static final String SHIPPING_TABLE_PATH = "file://"+DataExtractor.class
-            .getClassLoader().getResource("templates/shipping-table.xlsx").getPath();
-    private static final String JOURNAL_TABLE_PATH = "file://"+DataExtractor.class
-            .getClassLoader().getResource("templates/welding-journals.xlsx").getPath();
-
-
-
-
+    private static final String SHIPPING_TABLE_PATH = "file://"+ Objects.requireNonNull(DataExtractor.class
+            .getClassLoader().getResource("templates/shipping-table.xlsx")).getPath();
+    private static final String JOURNAL_TABLE_PATH = "file://"+ Objects.requireNonNull(DataExtractor.class
+            .getClassLoader().getResource("templates/welding-journals.xlsx")).getPath();
 
     public static List<ShipmentEntity> getShipmentEntities() {
         List<ShipmentEntity> result = new ArrayList<>();
-        XSpreadsheets xSpreadsheets = getSpreadsheets(SHIPPING_TABLE_PATH, getHiddenAsTemplateProperties());
+        XComponent xComponent = loadXComponent(SHIPPING_TABLE_PATH, getHiddenAsTemplateProperties());
+        XSpreadsheets xSpreadsheets = getSpreadsheets(xComponent);
         String[] xSpreadsheetsNames = xSpreadsheets.getElementNames();
 
         Arrays.stream(xSpreadsheetsNames).forEach(name ->{
             try {
                 Object sheet = xSpreadsheets.getByName(name);
-
                 XSpreadsheet xSpreadsheet = UnoRuntime.queryInterface(XSpreadsheet.class,sheet);
                 ShipmentEntity shipmentEntity;
                 int row = 0;
@@ -49,7 +47,6 @@ public class DataExtractor {
                     if (cellString.isEmpty()){
                         emptyRowsCount++;
                     }
-
                     if (cellString.equalsIgnoreCase("Дата отгрузки")){
                         shipmentEntity = getShipmentEntityFromStartRow(xSpreadsheet, row);
                         result.add(shipmentEntity);
@@ -65,8 +62,8 @@ public class DataExtractor {
             }
 
         });
+        close(xComponent);
         return result;
-
     }
 
     private static ShipmentEntity getShipmentEntityFromStartRow(XSpreadsheet xSpreadsheet, int startRow){
@@ -108,7 +105,8 @@ public class DataExtractor {
 
     public static List<JournalWeldingEntity> getJournalWeldingEntities(){
         List<JournalWeldingEntity> result = new ArrayList<>();
-        XSpreadsheets xSpreadsheets = getSpreadsheets(JOURNAL_TABLE_PATH,getHiddenAsTemplateProperties());
+        XComponent xComponent = loadXComponent(JOURNAL_TABLE_PATH,getHiddenAsTemplateProperties());
+        XSpreadsheets xSpreadsheets = getSpreadsheets(xComponent);
 
         try {
             Object sheet = xSpreadsheets.getByName(xSpreadsheets.getElementNames()[0]);
@@ -121,17 +119,18 @@ public class DataExtractor {
                 String firstCellValue = getCellTextByPosition(xSpreadsheet,0,startRow);
                 if(firstCellValue.isEmpty()){
                     emptyRowsCount++;
-                    continue;
                 }else{
                     result.add(getJournalWeldingEntityFromTableRow(startRow,xSpreadsheet));
                     startRow++;
                     emptyRowsCount=0;
                 }
             }
-            result.forEach(System.out::println);
             return result;
         }catch (Exception ex){
             throw new RuntimeException(ex);
+        }
+       finally {
+            close(xComponent);
         }
 
     }

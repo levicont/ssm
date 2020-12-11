@@ -1,34 +1,68 @@
 package com.lvg.ssm;
 
 import com.sun.star.beans.PropertyValue;
+import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.sheet.XSheetCellRange;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
+import com.sun.star.table.XCellRange;
+import com.sun.star.table.XColumnRowRange;
+import com.sun.star.table.XTableRows;
 import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.util.XCloseable;
 import sun.misc.ExtensionInstallationException;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 22.11.2020.
  */
 public class OpenOfficeUtils {
     private static final LocalDate DEFAULT_START_DATE = LocalDate.of(1899,12,30);
-    private static final String DESKTOP_SERVICE = "com.sun.star.frame.Desktop";
-    private static final String BLANK_STR = "_blank";
+    public static final String DESKTOP_SERVICE = "com.sun.star.frame.Desktop";
+    public static final String BLANK_STR = "_blank";
 
 
     public static LocalDate getLocalDateFromDoubleValue(double value){
         return DEFAULT_START_DATE.plusDays((long)value);
     }
 
-    public static XSpreadsheets getSpreadsheets(String url, PropertyValue[] loadProperties){
+    public static XComponent loadXComponent(String url, PropertyValue[] loadProperties){
+        try {
+            XComponentContext xRemoteContext = Bootstrap.bootstrap();
+            if (xRemoteContext == null) {
+                System.err.println("ERROR: Could not bootstrap default Office.");
+            }
+
+            XMultiComponentFactory xRemoteContextServiceManager = xRemoteContext.getServiceManager();
+            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xRemoteContext);
+            XComponentLoader xComponentLoader =
+                    UnoRuntime.queryInterface(XComponentLoader.class,desktop);
+            return xComponentLoader.loadComponentFromURL(url,BLANK_STR,0,loadProperties);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void close(XComponent xComponent){
+        try {
+            XModel xModel = UnoRuntime.queryInterface(XModel.class, xComponent);
+            XCloseable xCloseable = UnoRuntime.queryInterface(XCloseable.class, xModel);
+            xCloseable.close(false);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static XSpreadsheets getSpreadsheets(XComponent xComponent){
         try{
             XComponentContext xRemoteContext = Bootstrap.bootstrap();
             if (xRemoteContext == null) {
@@ -38,10 +72,9 @@ public class OpenOfficeUtils {
             Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xRemoteContext);
             XComponentLoader xComponentLoader =
                     UnoRuntime.queryInterface(XComponentLoader.class,desktop);
-            XComponent xSpreadsheetComponent =
-                    xComponentLoader.loadComponentFromURL(url,BLANK_STR,0,loadProperties);
+
             XSpreadsheetDocument xSpreadsheetDocument =
-                    UnoRuntime.queryInterface(XSpreadsheetDocument.class, xSpreadsheetComponent);
+                    UnoRuntime.queryInterface(XSpreadsheetDocument.class, xComponent);
             return xSpreadsheetDocument.getSheets();
 
         }catch (Exception ex){
@@ -81,5 +114,52 @@ public class OpenOfficeUtils {
         }
     }
 
+    private static XTableRows getAllSpreadsheetRows(XSpreadsheet xSpreadsheet){
+        try {
+            XSheetCellRange xSheetCellRange = UnoRuntime.queryInterface(XSheetCellRange.class,xSpreadsheet);
+            XColumnRowRange xColumnRowRange = UnoRuntime.queryInterface(XColumnRowRange.class,xSheetCellRange);
+            return xColumnRowRange.getRows();
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static void hideTableRows(XSpreadsheet xSpreadsheet, int startIndex, int count){
+        if (null == xSpreadsheet)
+            throw new NullPointerException("xSpreadsheet is null");
+        if (startIndex <=0 || count <= 0)
+            return;
+        try {
+            XTableRows xTableRows = getAllSpreadsheetRows(xSpreadsheet);
+
+            for (int i = startIndex; i <= count; i++){
+                XPropertySet xPropertySet = UnoRuntime.queryInterface(XPropertySet.class,
+                        xTableRows.getByIndex(i));
+                xPropertySet.setPropertyValue("IsVisible", false);
+            }
+
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static void showTableRows(XSpreadsheet xSpreadsheet, int startIndex, int count){
+        if (null == xSpreadsheet)
+            throw new NullPointerException("xSpreadsheet is null");
+        if (startIndex <=0 || count <= 0)
+            return;
+        try {
+            for (int i = startIndex; i <= count; i++){
+                XTableRows xTableRows = getAllSpreadsheetRows(xSpreadsheet);
+                XPropertySet xPropertySet = UnoRuntime.queryInterface(XPropertySet.class,
+                        xTableRows.getByIndex(i));
+                System.out.println("Showing row number: "+i);
+                xPropertySet.setPropertyValue("IsVisible", true);
+            }
+
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
 
 }
