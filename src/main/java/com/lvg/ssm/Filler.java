@@ -53,7 +53,8 @@ public class Filler {
     }
 
     public static void main(String[] args) {
-        List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
+        Set<ShipmentEntity> shipmentEntities = DataExtractor.getSortedShipmentEntities(
+                DataExtractor.getShipmentEntities());
         List<JournalWeldingEntity> journalWeldingEntities = DataExtractor.getJournalWeldingEntities();
         Set<TestReport> testReports = Combiner.combineJournalWelding(shipmentEntities,journalWeldingEntities);
 

@@ -8,10 +8,7 @@ import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.lvg.ssm.OpenOfficeUtils.*;
 
@@ -25,6 +22,8 @@ public class DataExtractor {
             .getClassLoader().getResource("templates/shipping-table.xlsx")).getPath();
     private static final String JOURNAL_TABLE_PATH = "file://"+ Objects.requireNonNull(DataExtractor.class
             .getClassLoader().getResource("templates/welding-journals.xlsx")).getPath();
+
+    private static Long lastIndex = 1l;
 
     public static List<ShipmentEntity> getShipmentEntities() {
         List<ShipmentEntity> result = new ArrayList<>();
@@ -49,6 +48,7 @@ public class DataExtractor {
                     }
                     if (cellString.equalsIgnoreCase("Дата отгрузки")){
                         shipmentEntity = getShipmentEntityFromStartRow(xSpreadsheet, row);
+
                         result.add(shipmentEntity);
                         row = row + 5 + shipmentEntity.getDetailEntities().size();
                         emptyRowsCount = 0;
@@ -63,12 +63,27 @@ public class DataExtractor {
 
         });
         close(xComponent);
+        System.out.println(result.size()+" shipment entities has found.");
         return result;
+    }
+
+    public static Set<ShipmentEntity> getSortedShipmentEntities(List<ShipmentEntity> shipmentEntities){
+        TreeSet<ShipmentEntity> result =
+                new TreeSet<>(Comparator.comparing(ShipmentEntity::getIndex));
+        shipmentEntities.forEach(shEntity ->{
+            if(!result.add(shEntity))
+                System.out.println("Shipment entity not added: "+shEntity.getShortStringData());
+        });
+        result.addAll(shipmentEntities);
+        System.out.println(result.size()+" shipment entities added to sorted set. Source list has "+shipmentEntities.size());
+        return result;
+
     }
 
     private static ShipmentEntity getShipmentEntityFromStartRow(XSpreadsheet xSpreadsheet, int startRow){
         try {
             ShipmentEntity entity = new ShipmentEntity();
+            entity.setIndex(lastIndex++);
             LocalDate date = getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(2, startRow).getValue());
             entity.setDate(date);
             entity.setTechnicalDrawings(getCellTextByPosition(xSpreadsheet,2,startRow+1));
@@ -125,6 +140,7 @@ public class DataExtractor {
                     emptyRowsCount=0;
                 }
             }
+            System.out.println(result.size()+" journal entities has found.");
             return result;
         }catch (Exception ex){
             throw new RuntimeException(ex);

@@ -8,11 +8,20 @@ import java.util.List;
  * Created by Victor Levchenko LVG Corp. on 22.11.2020.
  */
 public class ShipmentEntity {
+    private Long index;
     private LocalDate date;
     private String technicalDrawings;
     private String objectName;
     private String shippingShop;
     private List<DetailEntity> detailEntities = new ArrayList<>();
+
+    public Long getIndex() {
+        return index;
+    }
+
+    public void setIndex(Long index) {
+        this.index = index;
+    }
 
     public LocalDate getDate() {
         return date;
@@ -55,13 +64,36 @@ public class ShipmentEntity {
 
     }
 
+    public String getShortStringData(){
+        return index+"\t\t"+date+"\t\t"+technicalDrawings+"\t\t"+shippingShop+"\t\t";
+    }
+
     @Override
     public String toString() {
-        return  date+"\n"+
+        return  index+"\n"+
+                date+"\n"+
                 technicalDrawings + "\n" +
                 objectName + "\n" +
                 shippingShop + "\n" +
                 detailEntities;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ShipmentEntity that = (ShipmentEntity) o;
+
+        if (!index.equals(that.index)) return false;
+        return date != null ? date.equals(that.date) : that.date == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = index.hashCode();
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        return result;
     }
 
     public class DetailEntity{
@@ -100,6 +132,8 @@ public class ShipmentEntity {
                     count + "\t\t\t"+
                     weightOfMarkKg;
         }
+
+
     }
 
 

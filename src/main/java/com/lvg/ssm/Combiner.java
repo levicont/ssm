@@ -5,8 +5,13 @@ import java.util.*;
 
 public class Combiner  {
 
+    private static int[] lastNumbers = new int[12];
+    {
+        Arrays.stream(lastNumbers).forEach(i -> i=1);
+    }
 
-    public static Set<TestReport> combineJournalWelding(List<ShipmentEntity> shipmentEntities,
+
+    public static Set<TestReport> combineJournalWelding(Set<ShipmentEntity> shipmentEntities,
                                                            List<JournalWeldingEntity> journalWeldingEntities){
         System.out.println("Starting combine VT protocol...");
         Set<TestReport> result = new HashSet<>();
@@ -27,18 +32,27 @@ public class Combiner  {
     }
 
     private static String getSufixNumber(LocalDate date){
-        return "-" + date.getMonthValue() + "/" + date.getYear();
+
+        String month = date.getMonthValue()<10?"0"+date.getMonthValue():""+date.getMonthValue();
+        return "-" + month + "/" + date.getYear();
+    }
+
+    private static String getPrefixNumber(int index){
+        return index<10?"0"+index:""+index;
     }
 
     private static String getNextNumber(Set<TestReport> testReports, ShipmentEntity shipmentEntity){
+        int number = lastNumbers[shipmentEntity.getDate().getMonthValue()-1]++;
         int startNumber = 1;
 
-        for (TestReport testReport : testReports) {
-            if (testReport.
-                    equals(new TestReport("" + startNumber + getSufixNumber(shipmentEntity.getDate()))))
-                startNumber++;
-        }
-        return ""+startNumber+""+getSufixNumber(shipmentEntity.getDate());
+//        for (TestReport testReport : testReports) {
+//
+//            if (testReport.
+//                    equals(new TestReport(getPrefixNumber(startNumber)+getSufixNumber(shipmentEntity.getDate()))))
+//                startNumber++;
+//        }
+
+        return getPrefixNumber(number)+getSufixNumber(shipmentEntity.getDate());
     }
 
     private static String getJournalNumber(ShipmentEntity shipmentEntity, List<JournalWeldingEntity> journalWeldingEntities){
