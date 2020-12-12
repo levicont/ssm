@@ -12,7 +12,9 @@ public class TestReport {
 
     public static final String WELDING_JOURNAL_PREFIX_RU = "Журнал* №";
     public static final String WELDING_JOURNAL_PREFIX_ENG = "Log* #";
+    private static Long id = 1L;
 
+    private Long index;
     private String number;
     private LocalDate date;
     private String testObject = "Сварные соединения деталей Приложение 1   /    Weld joints of details in Appendix 1";
@@ -36,10 +38,10 @@ public class TestReport {
     private String getNdtSpecialistCert = "Сертификат № 614 VT.03.2016";
     private List<AppendixEntity> appendixEntities = new ArrayList<>();
 
-    public TestReport(){}
-    public TestReport(String number){
-        this.number = number;
+    public TestReport(){
+       index = id++;
     }
+
     public class AppendixEntity{
         private String workingDrawings;
         private String position;
@@ -83,7 +85,12 @@ public class TestReport {
     }
 
     public String getNumber() {
-        return number;
+        if(number!=null)
+            return number;
+        String month = date.getMonthValue()<10?"0"+date.getMonthValue():""+date.getMonthValue();
+        String suffix = "-" + month + "/" + date.getYear();
+        String prefix = index<10?"0"+index:""+index;
+        return prefix+suffix;
     }
 
     public void setNumber(String number) {
@@ -285,11 +292,11 @@ public class TestReport {
 
         TestReport that = (TestReport) o;
 
-        return number.equals(that.number);
+        return getNumber().equals(that.getNumber());
     }
 
     @Override
     public int hashCode() {
-        return number.hashCode();
+        return getNumber().hashCode();
     }
 }

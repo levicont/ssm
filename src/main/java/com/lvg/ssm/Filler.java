@@ -58,14 +58,14 @@ public class Filler {
         List<JournalWeldingEntity> journalWeldingEntities = DataExtractor.getJournalWeldingEntities();
         Set<TestReport> testReports = Combiner.combineJournalWelding(shipmentEntities,journalWeldingEntities);
 
-        testReports.forEach(tr ->{
-            Filler filler = new Filler(tr);
-            filler.fillUpVTReport();
-            filler.print();
-            filler.save();
-            filler.close();
-        });
-            Filler.hardClose();
+//        testReports.forEach(tr ->{
+//            Filler filler = new Filler(tr);
+//            filler.fillUpVTReport();
+//            filler.print();
+//            filler.save();
+//            filler.close();
+//        });
+//            Filler.hardClose();
 
     }
 
