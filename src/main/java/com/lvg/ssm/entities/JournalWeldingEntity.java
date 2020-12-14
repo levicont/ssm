@@ -1,4 +1,4 @@
-package com.lvg.ssm;
+package com.lvg.ssm.entities;
 
 import java.time.LocalDate;
 

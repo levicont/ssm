@@ -1,5 +1,7 @@
-package com.lvg.ssm;
+package com.lvg.ssm.services;
 
+import com.lvg.ssm.entities.JournalWeldingEntity;
+import com.lvg.ssm.entities.ShipmentEntity;
 import com.sun.star.lang.XComponent;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheets;
@@ -10,7 +12,7 @@ import com.sun.star.uno.UnoRuntime;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.lvg.ssm.OpenOfficeUtils.*;
+import static com.lvg.ssm.utils.OpenOfficeUtils.*;
 
 
 /**

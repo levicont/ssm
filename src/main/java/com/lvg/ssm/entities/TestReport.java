@@ -1,9 +1,10 @@
-package com.lvg.ssm;
+package com.lvg.ssm.entities;
+
+import com.lvg.ssm.utils.ApplicationProperties;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 20.11.2020.
@@ -13,6 +14,10 @@ public class TestReport {
     public static final String WELDING_JOURNAL_PREFIX_RU = "Журнал* №";
     public static final String WELDING_JOURNAL_PREFIX_ENG = "Log* #";
     private static Long id = 1L;
+
+    static {
+        id = Long.valueOf(ApplicationProperties.getProperty("StartVTProtocolsNumber"));
+    }
 
     private Long index;
     private String number;

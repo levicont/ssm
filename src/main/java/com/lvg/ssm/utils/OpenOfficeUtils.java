@@ -1,4 +1,4 @@
-package com.lvg.ssm;
+package com.lvg.ssm.utils;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
@@ -12,17 +12,14 @@ import com.sun.star.sheet.XSheetCellRange;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
-import com.sun.star.table.XCellRange;
 import com.sun.star.table.XColumnRowRange;
 import com.sun.star.table.XTableRows;
 import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XCloseable;
-import sun.misc.ExtensionInstallationException;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 22.11.2020.

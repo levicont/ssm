@@ -1,5 +1,9 @@
-package com.lvg.ssm;
+package com.lvg.ssm.services;
 
+import com.lvg.ssm.entities.TestReport;
+import com.lvg.ssm.utils.Formatter;
+import com.lvg.ssm.utils.OpenOfficeUtils;
+import com.lvg.ssm.utils.PdfPrinter;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.XNameContainer;
@@ -18,7 +22,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import static com.lvg.ssm.OpenOfficeUtils.*;
+import static com.lvg.ssm.utils.OpenOfficeUtils.*;
 
 public class Filler {
 
@@ -28,8 +32,6 @@ public class Filler {
             .getClassLoader().getResource("templates/prot-VT-template.ods")).getPath();
     private static final String PROTOCOL_VT_PAGE_STYLE_NAME = "protocol-VT";
     private static final String PROTOCOL_UT_PAGE_STYLE_NAME = "protocol-UT";
-    private static final String PROTOCOL_VT_PDF_PATH = "file:///home/lvg/tmp/VT-protocols/pdf/";
-    private static final String PDF_FILE_SUFFIX = ".pdf";
 
 
 
@@ -72,19 +74,14 @@ public class Filler {
     }
 
     public void print(){
-      String path = PROTOCOL_VT_PDF_PATH+getVTProtocolFileName()+PDF_FILE_SUFFIX;
-      PdfPrinter.print(xSpreadsheetDocument,path);
+
+      PdfPrinter.print(testReport,xSpreadsheetDocument);
 
     }
 
     public void save(){
-        try{
-            XStorable xStorable = UnoRuntime.queryInterface(XStorable.class, this.xSpreadsheetDocument);
-            String path = PROTOCOL_VT_PATH+getVTProtocolFileName()+ODS_FILE_SUFFIX;
-            xStorable.storeAsURL(path,new PropertyValue[0]);
-        }catch (Exception ex){
-            throw new RuntimeException(ex);
-        }
+        Saver saver = new SaverVT(testReport);
+        saver.save(xSpreadsheetDocument);
     }
 
 
@@ -106,9 +103,9 @@ public class Filler {
             Object sheet = xSpreadsheets.getByName(xSpreadsheets.getElementNames()[0]);
             XSpreadsheet xSpreadsheet = UnoRuntime.queryInterface(XSpreadsheet.class, sheet);
             System.out.println("Number: "+ testReport.getNumber());
-            System.out.println("Date: "+ formatDate(testReport.getDate()));
+            System.out.println("Date: "+ Formatter.formatDate(testReport.getDate()));
             setCellTextByPosition(xSpreadsheet,5,9,testReport.getNumber());
-            setCellTextByPosition(xSpreadsheet,7,9,formatDate(testReport.getDate()));
+            setCellTextByPosition(xSpreadsheet,7,9,Formatter.formatDate(testReport.getDate()));
             setCellTextByPosition(xSpreadsheet,3, 13, testReport.getWorkingDrawings());
             setCellTextByPosition(xSpreadsheet,8, 17, testReport.getWelder());
             setCellTextByPosition(xSpreadsheet,8, 18, testReport.getWelderEng());
@@ -165,14 +162,11 @@ public class Filler {
 
     private String getLeftFooterText(TestReport testReport){
         String number = testReport.getNumber();
-        String date = formatDate(testReport.getDate());
+        String date = Formatter.formatDate(testReport.getDate());
         return "Протокол VT № "+number+" от "+date+"\n" +
                 "Report VT #"+number+" of "+date;
     }
 
-    private static String formatDate(LocalDate date){
-        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
 
 
 }

@@ -1,6 +1,8 @@
 package com.lvg.ssm;
 
-import org.junit.Assert;
+import com.lvg.ssm.entities.JournalWeldingEntity;
+import com.lvg.ssm.entities.ShipmentEntity;
+import com.lvg.ssm.services.DataExtractor;
 import org.junit.Test;
 
 import java.time.LocalDate;

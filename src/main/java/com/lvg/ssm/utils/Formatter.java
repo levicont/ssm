@@ -1,4 +1,4 @@
-package com.lvg.ssm;
+package com.lvg.ssm.utils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class Formatter {
     private static final String DATE_TIME_FORMAT_PATTERN = "dd.MM.yyyy";
 
-    public static String formatDate(LocalDate date){
+    public static String formatDate(LocalDate date) {
         return date.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_PATTERN));
+    }
 }

@@ -1,11 +1,15 @@
-package com.lvg.ssm;
+package com.lvg.ssm.services;
+
+import com.lvg.ssm.entities.JournalWeldingEntity;
+import com.lvg.ssm.entities.ShipmentEntity;
+import com.lvg.ssm.entities.TestReport;
 
 import java.util.*;
 
 public class Combiner  {
 
       public static Set<TestReport> combineJournalWelding(Set<ShipmentEntity> shipmentEntities,
-                                                           List<JournalWeldingEntity> journalWeldingEntities){
+                                                          List<JournalWeldingEntity> journalWeldingEntities){
         System.out.println("Starting combine VT protocol...");
         Set<TestReport> result = new HashSet<>();
         shipmentEntities.forEach(shipmentEntity -> {

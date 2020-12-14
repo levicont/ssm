@@ -1,31 +1,24 @@
 package com.lvg.ssm;
 
+import com.lvg.ssm.utils.OpenOfficeUtils;
 import com.sun.star.awt.Point;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
-import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.XIndexAccess;
 import com.sun.star.frame.XComponentLoader;
-import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
-import com.sun.star.frame.XModel;
-import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XEventListener;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.sheet.*;
 import com.sun.star.table.XCell;
-import com.sun.star.table.XCellRange;
 import com.sun.star.table.XColumnRowRange;
 import com.sun.star.table.XTableRows;
-import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 15.11.2020.
