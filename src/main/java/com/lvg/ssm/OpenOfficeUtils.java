@@ -4,6 +4,7 @@ import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
@@ -31,6 +32,22 @@ public class OpenOfficeUtils {
     public static final String DESKTOP_SERVICE = "com.sun.star.frame.Desktop";
     public static final String BLANK_STR = "_blank";
 
+    private static XComponentContext xComponentContext;
+
+    public static XComponentContext getXComponentContext(){
+        try {
+            if (null == xComponentContext){
+                xComponentContext = Bootstrap.bootstrap();
+                if (xComponentContext == null) {
+                    System.err.println("ERROR: Could not bootstrap default Office.");
+                }
+            }
+            return xComponentContext;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
 
     public static LocalDate getLocalDateFromDoubleValue(double value){
         return DEFAULT_START_DATE.plusDays((long)value);
@@ -38,13 +55,8 @@ public class OpenOfficeUtils {
 
     public static XComponent loadXComponent(String url, PropertyValue[] loadProperties){
         try {
-            XComponentContext xRemoteContext = Bootstrap.bootstrap();
-            if (xRemoteContext == null) {
-                System.err.println("ERROR: Could not bootstrap default Office.");
-            }
-
-            XMultiComponentFactory xRemoteContextServiceManager = xRemoteContext.getServiceManager();
-            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xRemoteContext);
+            XMultiComponentFactory xRemoteContextServiceManager = getXComponentContext().getServiceManager();
+            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,getXComponentContext());
             XComponentLoader xComponentLoader =
                     UnoRuntime.queryInterface(XComponentLoader.class,desktop);
             return xComponentLoader.loadComponentFromURL(url,BLANK_STR,0,loadProperties);
@@ -62,17 +74,24 @@ public class OpenOfficeUtils {
         }
     }
 
-    public static XSpreadsheets getSpreadsheets(XComponent xComponent){
-        try{
-            XComponentContext xRemoteContext = Bootstrap.bootstrap();
-            if (xRemoteContext == null) {
-                System.err.println("ERROR: Could not bootstrap default Office.");
-            }
-            XMultiComponentFactory xRemoteContextServiceManager = xRemoteContext.getServiceManager();
-            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xRemoteContext);
+    public static void closeContext(){
+        if (xComponentContext==null)
+            return;
+        try {
+            XMultiComponentFactory xRemoteContextServiceManager = xComponentContext.getServiceManager();
+            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xComponentContext);
             XComponentLoader xComponentLoader =
                     UnoRuntime.queryInterface(XComponentLoader.class,desktop);
+            XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, xComponentLoader);
+            xDesktop.terminate();
+            xComponentContext=null;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
 
+    public static XSpreadsheets getSpreadsheets(XComponent xComponent){
+        try{
             XSpreadsheetDocument xSpreadsheetDocument =
                     UnoRuntime.queryInterface(XSpreadsheetDocument.class, xComponent);
             return xSpreadsheetDocument.getSheets();

@@ -23,7 +23,7 @@ public class DataExtractor {
     private static final String JOURNAL_TABLE_PATH = "file://"+ Objects.requireNonNull(DataExtractor.class
             .getClassLoader().getResource("templates/welding-journals.xlsx")).getPath();
 
-    private static Long lastIndex = 1l;
+    private static Long lastIndex = 1L;
 
     public static List<ShipmentEntity> getShipmentEntities() {
         List<ShipmentEntity> result = new ArrayList<>();

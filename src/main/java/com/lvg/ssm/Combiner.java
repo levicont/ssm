@@ -1,9 +1,6 @@
 package com.lvg.ssm;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Combiner  {
 
@@ -40,9 +37,21 @@ public class Combiner  {
     }
 
     private static boolean isEqualsKMD(String sheepmentKMD, String journalKMD){
-        String normalizeSheepmentKMD = sheepmentKMD.trim().toLowerCase().replace('-',' ');
-        String normalizeJournalKMD = journalKMD.trim().toLowerCase().replace('-',' ');
-        return normalizeJournalKMD.equals(normalizeSheepmentKMD);
+
+        return normalizeKMDString(sheepmentKMD).equals(normalizeKMDString(journalKMD));
+    }
+
+    private static String normalizeKMDString(String KMDString){
+        String normalizeShipmentKMD = KMDString.trim().toLowerCase().replace('-',' ');
+        StringTokenizer st  = new StringTokenizer(normalizeShipmentKMD," ");
+        StringBuilder normalizeKMDBuild = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String nextToken = st.nextToken();
+            if (nextToken.equals(" "))
+                continue;
+            normalizeKMDBuild.append(nextToken.trim()).append(" ");
+        }
+        return normalizeKMDBuild.toString();
     }
 
     private static List<TestReport.AppendixEntity> getAppendixEntities(ShipmentEntity shipmentEntity, TestReport testReport){

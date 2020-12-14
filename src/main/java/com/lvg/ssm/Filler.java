@@ -2,24 +2,21 @@ package com.lvg.ssm;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.container.XNameContainer;
 import com.sun.star.frame.XComponentLoader;
-import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XStorable;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
-import com.sun.star.sheet.*;
+import com.sun.star.sheet.XHeaderFooterContent;
+import com.sun.star.sheet.XSpreadsheet;
+import com.sun.star.sheet.XSpreadsheetDocument;
+import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.style.XStyleFamiliesSupplier;
 import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XComponentContext;
-import com.sun.star.view.XPrintable;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 import static com.lvg.ssm.OpenOfficeUtils.*;
 
@@ -27,13 +24,10 @@ public class Filler {
 
     private static final int APPENDIX_ENTITIES_START_ROW = 76;
     private static final int APPENDIX_ENTITIES_FINAL_ROW = 198;
-    private static final String PROTOCOL_TAMPLATE_PATH = "file://"+Filler.class
-            .getClassLoader().getResource("templates/prot-VT-template.ods").getPath();
+    private static final String PROTOCOL_TAMPLATE_PATH = "file://"+ Objects.requireNonNull(Filler.class
+            .getClassLoader().getResource("templates/prot-VT-template.ods")).getPath();
     private static final String PROTOCOL_VT_PAGE_STYLE_NAME = "protocol-VT";
     private static final String PROTOCOL_UT_PAGE_STYLE_NAME = "protocol-UT";
-    private static final String PROTOCOL_VT_PATH = "file:///home/lvg/tmp/VT-protocols/";
-    private static final String ODS_FILE_SUFFIX = ".ods";
-    private static final String PROTOCOL_VT_FILE_PREFIX = "прот-VT-";
     private static final String PROTOCOL_VT_PDF_PATH = "file:///home/lvg/tmp/VT-protocols/pdf/";
     private static final String PDF_FILE_SUFFIX = ".pdf";
 
@@ -42,7 +36,7 @@ public class Filler {
     private XSpreadsheetDocument xSpreadsheetDocument;
     private XComponent xComponent;
     private TestReport testReport;
-    private static XComponentContext xComponentContext;
+
 
 
     public Filler(TestReport testReport){
@@ -52,32 +46,11 @@ public class Filler {
         this.testReport = testReport;
     }
 
-    public static void main(String[] args) {
-        Set<ShipmentEntity> shipmentEntities = DataExtractor.getSortedShipmentEntities(
-                DataExtractor.getShipmentEntities());
-        List<JournalWeldingEntity> journalWeldingEntities = DataExtractor.getJournalWeldingEntities();
-        Set<TestReport> testReports = Combiner.combineJournalWelding(shipmentEntities,journalWeldingEntities);
-
-//        testReports.forEach(tr ->{
-//            Filler filler = new Filler(tr);
-//            filler.fillUpVTReport();
-//            filler.print();
-//            filler.save();
-//            filler.close();
-//        });
-//            Filler.hardClose();
-
-    }
 
     private void initXComponent(PropertyValue[] loadProperties){
         try{
-            xComponentContext = Bootstrap.bootstrap();
-
-            if (xComponentContext == null) {
-                System.err.println("ERROR: Could not bootstrap default Office.");
-            }
-            XMultiComponentFactory xRemoteContextServiceManager = xComponentContext.getServiceManager();
-            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xComponentContext);
+            XMultiComponentFactory xRemoteContextServiceManager = getXComponentContext().getServiceManager();
+            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,getXComponentContext());
             XComponentLoader xComponentLoader =
                     UnoRuntime.queryInterface(XComponentLoader.class,desktop);
             this.xComponent = xComponentLoader.loadComponentFromURL(PROTOCOL_TAMPLATE_PATH,BLANK_STR,0,loadProperties);
@@ -114,10 +87,7 @@ public class Filler {
         }
     }
 
-    private String getVTProtocolFileName(){
-        return PROTOCOL_VT_FILE_PREFIX+testReport.getNumber().replace('/','-')+"_"+
-                formatDate(testReport.getDate()).replace('.','-');
-    }
+
 
     public void close(){
         try {
@@ -126,28 +96,6 @@ public class Filler {
             throw new RuntimeException(ex);
         }
     }
-
-    public static void hardClose(){
-        if (xComponentContext==null)
-            return;
-        try {
-            XMultiComponentFactory xRemoteContextServiceManager = xComponentContext.getServiceManager();
-            Object desktop = xRemoteContextServiceManager.createInstanceWithContext(DESKTOP_SERVICE,xComponentContext);
-            XComponentLoader xComponentLoader =
-                    UnoRuntime.queryInterface(XComponentLoader.class,desktop);
-            XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, xComponentLoader);
-            xDesktop.terminate();
-        }catch (Exception ex){
-            throw new RuntimeException(ex);
-        }
-    }
-
-
-
-
-
-
-
 
     public void fillUpVTReport(){
         System.out.println("Starting filling report");
@@ -203,8 +151,6 @@ public class Filler {
                     pageStyle);
             XPropertySet xPropertySet = UnoRuntime.queryInterface(XPropertySet.class,
                     xNameContainer.getByName(PROTOCOL_VT_PAGE_STYLE_NAME));
-            XHeaderFooterContent pageFooterContent = UnoRuntime.queryInterface(XHeaderFooterContent.class,
-                    xPropertySet.getPropertyValue("LeftPageFooterContent"));
 
             XHeaderFooterContent rightPageFooterContent = UnoRuntime.queryInterface(XHeaderFooterContent.class,
                     xPropertySet.getPropertyValue("RightPageFooterContent"));
