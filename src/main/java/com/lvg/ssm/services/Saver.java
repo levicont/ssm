@@ -38,7 +38,7 @@ public class Saver {
       }catch (Exception ex){
          throw new RuntimeException(ex);
       }
-   };
+   }
 
    private String getPath(){
 
