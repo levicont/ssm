@@ -22,7 +22,7 @@ public class DataExtractorTest {
         assertNotNull(result);
         assertTrue(result.size()>0);
         System.out.println("Shipment entities size: "+ result.size());
-        ShipmentEntity firstEntity = result.get(0);
+        ShipmentEntity firstEntity = result.iterator().next();
         assertEquals(firstEntity.getDate(), LocalDate.of(2020,9,2));
         assertEquals(firstEntity.getTechnicalDrawings(),"СМК 20029-КМД");
         assertEquals(firstEntity.getObjectName(),"Бахмутовская молочно-товарная ферма");
@@ -33,7 +33,7 @@ public class DataExtractorTest {
         assertEquals(firstEntity.getDetailEntities().get(0).getCount(), Integer.valueOf(79));
         assertEquals(firstEntity.getDetailEntities().get(0).getWeightOfMarkKg(), Double.valueOf(73.8));
 
-        ShipmentEntity lastEntity = result.get(result.size()-1);
+        ShipmentEntity lastEntity = result.iterator().next();
         assertEquals(lastEntity.getDate(), LocalDate.of(2020,11,20));
         assertEquals(lastEntity.getTechnicalDrawings(),"СМК 20024 КМД");
         assertEquals(lastEntity.getObjectName(),"Офисно-складской комплекс");

@@ -1,19 +1,18 @@
 package com.lvg.ssm.services;
 
-import com.lvg.ssm.entities.JournalWeldingEntity;
-import com.lvg.ssm.entities.ShipmentEntity;
-import com.lvg.ssm.entities.TestReport;
+import com.lvg.ssm.entities.*;
 
 import java.util.*;
 
 public class Combiner  {
 
-      public static Set<TestReport> combineJournalWelding(Set<ShipmentEntity> shipmentEntities,
-                                                          List<JournalWeldingEntity> journalWeldingEntities){
-        System.out.println("Starting combine VT protocol...");
-        Set<TestReport> result = new HashSet<>();
+      public static Set<TestReport> combineJournalWelding(List<ShipmentEntity> shipmentEntities,
+                                                          List<JournalWeldingEntity> journalWeldingEntities,
+                                                          TestReportType reportType){
+        System.out.println("Starting combine "+reportType+" protocol...");
+        Set<TestReport> result = new TreeSet<>(Comparator.comparing(TestReport::getNumber));
         shipmentEntities.forEach(shipmentEntity -> {
-            TestReport report = new TestReport();
+            TestReport report = TestReport.getTestReport(reportType);
             report.setDate(shipmentEntity.getDate());
             report.setWorkingDrawings(shipmentEntity.getTechnicalDrawings());
             String journalWeldingSuffixNumber = getJournalNumber(shipmentEntity,journalWeldingEntities);
@@ -40,9 +39,9 @@ public class Combiner  {
         return number.toString();
     }
 
-    private static boolean isEqualsKMD(String sheepmentKMD, String journalKMD){
+    private static boolean isEqualsKMD(String shipmentKMD, String journalKMD){
 
-        return normalizeKMDString(sheepmentKMD).equals(normalizeKMDString(journalKMD));
+        return normalizeKMDString(shipmentKMD).equals(normalizeKMDString(journalKMD));
     }
 
     private static String normalizeKMDString(String KMDString){

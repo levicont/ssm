@@ -169,7 +169,6 @@ public class OpenOfficeUtils {
                 XTableRows xTableRows = getAllSpreadsheetRows(xSpreadsheet);
                 XPropertySet xPropertySet = UnoRuntime.queryInterface(XPropertySet.class,
                         xTableRows.getByIndex(i));
-                System.out.println("Showing row number: "+i);
                 xPropertySet.setPropertyValue("IsVisible", true);
             }
 

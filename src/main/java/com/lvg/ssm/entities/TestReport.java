@@ -1,7 +1,5 @@
 package com.lvg.ssm.entities;
 
-import com.lvg.ssm.utils.ApplicationProperties;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +7,10 @@ import java.util.List;
 /**
  * Created by Victor Levchenko LVG Corp. on 20.11.2020.
  */
-public class TestReport {
+public abstract class TestReport {
 
     public static final String WELDING_JOURNAL_PREFIX_RU = "Журнал* №";
     public static final String WELDING_JOURNAL_PREFIX_ENG = "Log* #";
-    private static Long id = 1L;
-
-    static {
-        id = Long.valueOf(ApplicationProperties.getProperty("StartVTProtocolsNumber"));
-    }
 
     private Long index;
     private String number;
@@ -38,14 +31,10 @@ public class TestReport {
     private String defectFounds = "Дефектов не обнаружено / No defects found";
     private String conclusions = "Удовлетворяет требованиям по качеству / Satisfies quality requirements";
     private String laboratoryHead = "Крапива Д.А.";
-    private String laboratoryHeadCert = "Сертификат № 614 VT.02.2016";
+    private String laboratoryHeadCert = "Сертификат № ";
     private String ndtSpecialist = "Левченко В.Г.";
-    private String getNdtSpecialistCert = "Сертификат № 614 VT.03.2016";
+    private String ndtSpecialistCert = "Сертификат № ";
     private List<AppendixEntity> appendixEntities = new ArrayList<>();
-
-    public TestReport(){
-       index = id++;
-    }
 
     public class AppendixEntity{
         private String workingDrawings;
@@ -89,17 +78,15 @@ public class TestReport {
         }
     }
 
+    public abstract Long getIndex();
+
     public String getNumber() {
         if(number!=null)
             return number;
-        String month = date.getMonthValue()<10?"0"+date.getMonthValue():""+date.getMonthValue();
+        String month = getDate().getMonthValue()<10?"0"+getDate().getMonthValue():""+getDate().getMonthValue();
         String suffix = "-" + month + "/" + date.getYear();
-        String prefix = index<10?"0"+index:""+index;
+        String prefix = getIndex()<10?"0"+getIndex():""+getIndex();
         return prefix+suffix;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public LocalDate getDate() {
@@ -110,44 +97,12 @@ public class TestReport {
         this.date = date;
     }
 
-    public String getTestObject() {
-        return testObject;
-    }
-
-    public void setTestObject(String testObject) {
-        this.testObject = testObject;
-    }
-
     public String getWorkingDrawings() {
         return workingDrawings;
     }
 
     public void setWorkingDrawings(String workingDrawings) {
         this.workingDrawings = workingDrawings;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getGeometricSize() {
-        return geometricSize;
-    }
-
-    public void setGeometricSize(String geometricSize) {
-        this.geometricSize = geometricSize;
-    }
-
-    public String getWeldJoinId() {
-        return weldJoinId;
-    }
-
-    public void setWeldJoinId(String weldJoinId) {
-        this.weldJoinId = weldJoinId;
     }
 
     public String getWelder() {
@@ -182,92 +137,8 @@ public class TestReport {
         this.welderMarkEng = welderMarkEng;
     }
 
-    public String getWeldTechnology() {
-        return weldTechnology;
-    }
-
-    public void setWeldTechnology(String weldTechnology) {
-        this.weldTechnology = weldTechnology;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public String getControlValue() {
-        return controlValue;
-    }
-
-    public void setControlValue(String controlValue) {
-        this.controlValue = controlValue;
-    }
-
-    public String getTestObjectOrigin() {
-        return testObjectOrigin;
-    }
-
-    public void setTestObjectOrigin(String testObjectOrigin) {
-        this.testObjectOrigin = testObjectOrigin;
-    }
-
-    public String getDefectFounds() {
-        return defectFounds;
-    }
-
-    public void setDefectFounds(String defectFounds) {
-        this.defectFounds = defectFounds;
-    }
-
-    public String getConclusions() {
-        return conclusions;
-    }
-
-    public void setConclusions(String conclusions) {
-        this.conclusions = conclusions;
-    }
-
-    public String getLaboratoryHead() {
-        return laboratoryHead;
-    }
-
-    public void setLaboratoryHead(String laboratoryHead) {
-        this.laboratoryHead = laboratoryHead;
-    }
-
-    public String getLaboratoryHeadCert() {
-        return laboratoryHeadCert;
-    }
-
-    public void setLaboratoryHeadCert(String laboratoryHeadCert) {
-        this.laboratoryHeadCert = laboratoryHeadCert;
-    }
-
-    public String getNdtSpecialist() {
-        return ndtSpecialist;
-    }
-
-    public void setNdtSpecialist(String ndtSpecialist) {
-        this.ndtSpecialist = ndtSpecialist;
-    }
-
-    public String getGetNdtSpecialistCert() {
-        return getNdtSpecialistCert;
-    }
-
-    public void setGetNdtSpecialistCert(String getNdtSpecialistCert) {
-        this.getNdtSpecialistCert = getNdtSpecialistCert;
-    }
-
     public List<AppendixEntity> getAppendixEntities() {
         return appendixEntities;
-    }
-
-    public void setAppendixEntities(List<AppendixEntity> appendixEntities) {
-        this.appendixEntities = appendixEntities;
     }
 
     public enum Condition{
@@ -277,10 +148,6 @@ public class TestReport {
 
         Condition(String value){
             this.value = value;
-        }
-
-        public String getValue() {
-            return value;
         }
 
         @Override
@@ -304,4 +171,14 @@ public class TestReport {
     public int hashCode() {
         return getNumber().hashCode();
     }
+
+    public static TestReport getTestReport(TestReportType type){
+        if (type == TestReportType.VT)
+            return new TestReportVT();
+        if (type == TestReportType.UT)
+            return new TestReportUT();
+        throw new IllegalArgumentException();
+    }
+
+    public abstract TestReportType getType();
 }

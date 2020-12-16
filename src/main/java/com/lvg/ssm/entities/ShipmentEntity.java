@@ -3,17 +3,25 @@ package com.lvg.ssm.entities;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Victor Levchenko LVG Corp. on 22.11.2020.
  */
 public class ShipmentEntity {
+    private static Long lastId = 1L;
+
+
     private Long index;
     private LocalDate date;
     private String technicalDrawings;
     private String objectName;
     private String shippingShop;
     private List<DetailEntity> detailEntities = new ArrayList<>();
+
+    public ShipmentEntity(){
+        index = lastId++;
+    }
 
     public Long getIndex() {
         return index;
@@ -59,10 +67,6 @@ public class ShipmentEntity {
         return detailEntities;
     }
 
-    public void setDetailEntities(List<DetailEntity> detailEntities) {
-        this.detailEntities = detailEntities;
-
-    }
 
     public String getShortStringData(){
         return index+"\t\t"+date+"\t\t"+technicalDrawings+"\t\t"+shippingShop+"\t\t";
@@ -86,7 +90,7 @@ public class ShipmentEntity {
         ShipmentEntity that = (ShipmentEntity) o;
 
         if (!index.equals(that.index)) return false;
-        return date != null ? date.equals(that.date) : that.date == null;
+        return Objects.equals(date, that.date);
     }
 
     @Override

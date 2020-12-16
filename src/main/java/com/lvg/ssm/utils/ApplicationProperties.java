@@ -7,6 +7,8 @@ import java.util.Properties;
 
 public class ApplicationProperties {
     private static final String APP_PROPERTIES_URL;
+    public static final String OPEN_OFFICE_FILE_PATH_PREFIX = "file://";
+    public static final String USER_HOME_PATH_PROPERTY_NAME = "user.home";
 
     static {
         APP_PROPERTIES_URL = Objects.requireNonNull(ApplicationProperties.class
@@ -14,7 +16,6 @@ public class ApplicationProperties {
     }
 
     private static Properties properties;
-
 
     private static Properties getProperties(){
         if (null != properties)
@@ -35,6 +36,9 @@ public class ApplicationProperties {
         Properties properties = getProperties();
         if (properties.containsKey(propertyName))
             return properties.getProperty(propertyName);
+        Properties systemProperties = System.getProperties();
+        if (systemProperties.containsKey(propertyName))
+            return systemProperties.getProperty(propertyName);
         throw new RuntimeException("No property with such name: "+propertyName);
     }
 }

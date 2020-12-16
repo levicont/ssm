@@ -66,6 +66,7 @@ public class DataExtractor {
         });
         close(xComponent);
         System.out.println(result.size()+" shipment entities has found.");
+        result.sort(Comparator.comparing(ShipmentEntity::getDate));
         return result;
     }
 
@@ -85,7 +86,6 @@ public class DataExtractor {
     private static ShipmentEntity getShipmentEntityFromStartRow(XSpreadsheet xSpreadsheet, int startRow){
         try {
             ShipmentEntity entity = new ShipmentEntity();
-            entity.setIndex(lastIndex++);
             LocalDate date = getLocalDateFromDoubleValue(xSpreadsheet.getCellByPosition(2, startRow).getValue());
             entity.setDate(date);
             entity.setTechnicalDrawings(getCellTextByPosition(xSpreadsheet,2,startRow+1));
