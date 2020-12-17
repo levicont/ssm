@@ -13,7 +13,7 @@ public class TestReportUT extends TestReport {
 
     private Long index;
 
-    public TestReportUT(){
+    TestReportUT(){
         index = lastIndex++;
     }
 

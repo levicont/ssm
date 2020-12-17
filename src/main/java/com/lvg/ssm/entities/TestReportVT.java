@@ -38,7 +38,7 @@ public class TestReportVT extends TestReport {
     private List<AppendixEntity> appendixEntities = new ArrayList<>();
 
 
-    public TestReportVT(){
+    TestReportVT(){
         this.index = lastIndex++;
     }
 
@@ -50,14 +50,6 @@ public class TestReportVT extends TestReport {
     @Override
     public TestReportType getType() {
         return TestReportType.VT;
-    }
-
-    public String getNdtSpecialistCert(){
-        return this.ndtSpecialistCert;
-    }
-
-    public void setNdtSpecialistCert(String ndtSpecialistCert){
-        this.ndtSpecialistCert = ndtSpecialistCert;
     }
 
     @Override

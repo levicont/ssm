@@ -5,6 +5,7 @@ import com.lvg.ssm.entities.*;
 import java.util.*;
 
 public class Combiner  {
+    private static final Double MAX_WEIGHT_FOR_UT_KG = 1000D;
 
       public static Set<TestReport> combineJournalWelding(List<ShipmentEntity> shipmentEntities,
                                                           List<JournalWeldingEntity> journalWeldingEntities,
