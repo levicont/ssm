@@ -11,6 +11,8 @@ import com.sun.star.uno.UnoRuntime;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.lvg.ssm.utils.OpenOfficeUtils.*;
 
@@ -25,10 +27,13 @@ public class DataExtractor {
     private static final String JOURNAL_TABLE_PATH = "file://"+ Objects.requireNonNull(DataExtractor.class
             .getClassLoader().getResource("templates/welding-journals.xlsx")).getPath();
 
-    private static Long lastIndex = 1L;
+    private static List<ShipmentEntity> shipmentEntityList = new ArrayList<>();
+    private static List<JournalWeldingEntity> journalWeldingEntityList = new ArrayList<>();
+
 
     public static List<ShipmentEntity> getShipmentEntities() {
-        List<ShipmentEntity> result = new ArrayList<>();
+        if (!shipmentEntityList.isEmpty())
+            return shipmentEntityList;
         XComponent xComponent = loadXComponent(SHIPPING_TABLE_PATH, getHiddenAsTemplateProperties());
         XSpreadsheets xSpreadsheets = getSpreadsheets(xComponent);
         String[] xSpreadsheetsNames = xSpreadsheets.getElementNames();
@@ -51,7 +56,7 @@ public class DataExtractor {
                     if (cellString.equalsIgnoreCase("Дата отгрузки")){
                         shipmentEntity = getShipmentEntityFromStartRow(xSpreadsheet, row);
 
-                        result.add(shipmentEntity);
+                        shipmentEntityList.add(shipmentEntity);
                         row = row + 5 + shipmentEntity.getDetailEntities().size();
                         emptyRowsCount = 0;
                         continue;
@@ -65,22 +70,22 @@ public class DataExtractor {
 
         });
         close(xComponent);
-        System.out.println(result.size()+" shipment entities has found.");
-        result.sort(Comparator.comparing(ShipmentEntity::getDate));
-        return result;
+        System.out.println(shipmentEntityList.size()+" shipment entities has found.");
+        shipmentEntityList.sort(Comparator.comparing(ShipmentEntity::getDate));
+        return shipmentEntityList;
     }
 
-    public static Set<ShipmentEntity> getSortedShipmentEntities(List<ShipmentEntity> shipmentEntities){
-        TreeSet<ShipmentEntity> result =
-                new TreeSet<>(Comparator.comparing(ShipmentEntity::getIndex));
-        shipmentEntities.forEach(shEntity ->{
-            if(!result.add(shEntity))
-                System.out.println("Shipment entity not added: "+shEntity.getShortStringData());
+    public static List<ShipmentEntity> getFilteredShipmentEntities(Double minWeightOfMark){
+        List<ShipmentEntity> result = new ArrayList<>(getShipmentEntities());
+        result.stream().forEach(shipmentEntity -> {
+            List<ShipmentEntity.DetailEntity> detailEntities = shipmentEntity.getDetailEntities().stream()
+                    .filter(detailEntity ->
+                    detailEntity.getWeightOfMarkKg()>=minWeightOfMark).collect(Collectors.toList());
+            shipmentEntity.getDetailEntities().clear();
+            shipmentEntity.getDetailEntities().addAll(detailEntities);
         });
-        result.addAll(shipmentEntities);
-        System.out.println(result.size()+" shipment entities added to sorted set. Source list has "+shipmentEntities.size());
-        return result;
-
+        return result.stream().filter(shipmentEntity -> !shipmentEntity.getDetailEntities().isEmpty())
+                .collect(Collectors.toList());
     }
 
     private static ShipmentEntity getShipmentEntityFromStartRow(XSpreadsheet xSpreadsheet, int startRow){
