@@ -18,6 +18,7 @@ import com.sun.star.text.XText;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.XCloseable;
+import ooo.connector.BootstrapSocketConnector;
 
 import java.time.LocalDate;
 
@@ -34,7 +35,7 @@ public class OpenOfficeUtils {
     public static XComponentContext getXComponentContext(){
         try {
             if (null == xComponentContext){
-                xComponentContext = Bootstrap.bootstrap();
+                xComponentContext = BootstrapSocketConnector.bootstrap("/opt/openoffice4/program");
                 if (xComponentContext == null) {
                     System.err.println("ERROR: Could not bootstrap default Office.");
                 }

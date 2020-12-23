@@ -30,7 +30,10 @@ public class DataExtractor {
     private static List<ShipmentEntity> shipmentEntityList = new ArrayList<>();
     private static List<JournalWeldingEntity> journalWeldingEntityList = new ArrayList<>();
 
-
+    static {
+        System.out.println("SHIPPING_TABLE_PATH: "+SHIPPING_TABLE_PATH);
+        System.out.println("JOURNAL_TABLE_PATH: "+JOURNAL_TABLE_PATH);
+    }
     public static List<ShipmentEntity> getShipmentEntities() {
         if (!shipmentEntityList.isEmpty())
             return shipmentEntityList;
