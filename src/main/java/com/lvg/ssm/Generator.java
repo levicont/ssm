@@ -10,38 +10,65 @@ import com.lvg.ssm.services.Filler;
 import com.lvg.ssm.utils.ApplicationProperties;
 import com.lvg.ssm.utils.OpenOfficeUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 
 public class Generator
 {
+    private static boolean isVT = false;
+    private static boolean isUT = false;
+
     public static void main( String[] args )
     {
-        List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
-        List<JournalWeldingEntity> journalWeldingEntities = DataExtractor.getJournalWeldingEntities();
-        Set<TestReport> testReportsVT = Combiner.combineJournalWelding(shipmentEntities,journalWeldingEntities, TestReportType.VT);
-        List<ShipmentEntity> shipmentEntitiesUT = DataExtractor.getFilteredShipmentEntities(
-                Double.valueOf(ApplicationProperties.getProperty("MinWeightOFMarkKg")));
-        Set<TestReport> testReportsUT = Combiner.combineJournalWelding(shipmentEntitiesUT,journalWeldingEntities,TestReportType.UT);
-
-        testReportsVT.forEach(tr ->{
-            Filler filler = new Filler(tr);
-            filler.fillUpReport();
-            filler.print();
-            filler.save();
-            filler.close();
-        });
-        testReportsUT.forEach(tr ->{
-            Filler filler = new Filler(tr);
-            filler.fillUpReport();
-            filler.print();
-            filler.save();
-            filler.close();
+        Arrays.stream(args).forEach(arg ->{
+            if (arg.equalsIgnoreCase(TestReportType.VT.toString()))
+                isVT = true;
+            if (arg.equalsIgnoreCase(TestReportType.UT.toString()))
+                isUT = true;
         });
 
 
-        OpenOfficeUtils.closeContext();
+        try{
+            List<ShipmentEntity> shipmentEntities = DataExtractor.getShipmentEntities();
+            List<JournalWeldingEntity> journalWeldingEntities = DataExtractor.getJournalWeldingEntities();
+
+            if (isVT){
+                Set<TestReport> testReportsVT = Combiner.combineJournalWelding(shipmentEntities,
+                        journalWeldingEntities, TestReportType.VT);
+                testReportsVT.forEach(tr ->{
+                    Filler filler = new Filler(tr);
+                    filler.fillUpReport();
+                    filler.print();
+                    filler.save();
+                    filler.close();
+                });
+            }
+            if(isUT){
+                List<ShipmentEntity> shipmentEntitiesUT = DataExtractor.getFilteredShipmentEntities(
+                        Double.valueOf(ApplicationProperties.getProperty("MinWeightOFMarkKg")));
+                Set<TestReport> testReportsUT = Combiner.combineJournalWelding(shipmentEntitiesUT,journalWeldingEntities,TestReportType.UT);
+
+                testReportsUT.forEach(tr ->{
+                    Filler filler = new Filler(tr);
+                    filler.fillUpReport();
+                    filler.print();
+                    filler.save();
+                    filler.close();
+                });
+
+
+            }
+
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        finally {
+            OpenOfficeUtils.closeContext();
+        }
+
+
 
 
     }

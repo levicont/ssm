@@ -2,7 +2,6 @@ package com.lvg.ssm.utils;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XModel;
@@ -35,7 +34,7 @@ public class OpenOfficeUtils {
     public static XComponentContext getXComponentContext(){
         try {
             if (null == xComponentContext){
-                xComponentContext = BootstrapSocketConnector.bootstrap("/opt/openoffice4/program");
+                xComponentContext = BootstrapSocketConnector.bootstrap(ApplicationProperties.getProperty(ApplicationProperties.OPEN_OFFICE_PATH_PROPERTY_NAME));
                 if (xComponentContext == null) {
                     System.err.println("ERROR: Could not bootstrap default Office.");
                 }

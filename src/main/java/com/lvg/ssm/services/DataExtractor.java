@@ -11,7 +11,6 @@ import com.sun.star.uno.UnoRuntime;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.lvg.ssm.utils.OpenOfficeUtils.*;
@@ -30,10 +29,7 @@ public class DataExtractor {
     private static List<ShipmentEntity> shipmentEntityList = new ArrayList<>();
     private static List<JournalWeldingEntity> journalWeldingEntityList = new ArrayList<>();
 
-    static {
-        System.out.println("SHIPPING_TABLE_PATH: "+SHIPPING_TABLE_PATH);
-        System.out.println("JOURNAL_TABLE_PATH: "+JOURNAL_TABLE_PATH);
-    }
+
     public static List<ShipmentEntity> getShipmentEntities() {
         if (!shipmentEntityList.isEmpty())
             return shipmentEntityList;
@@ -80,7 +76,7 @@ public class DataExtractor {
 
     public static List<ShipmentEntity> getFilteredShipmentEntities(Double minWeightOfMark){
         List<ShipmentEntity> result = new ArrayList<>(getShipmentEntities());
-        result.stream().forEach(shipmentEntity -> {
+        result.forEach(shipmentEntity -> {
             List<ShipmentEntity.DetailEntity> detailEntities = shipmentEntity.getDetailEntities().stream()
                     .filter(detailEntity ->
                     detailEntity.getWeightOfMarkKg()>=minWeightOfMark).collect(Collectors.toList());
@@ -129,7 +125,8 @@ public class DataExtractor {
     }
 
     public static List<JournalWeldingEntity> getJournalWeldingEntities(){
-        List<JournalWeldingEntity> result = new ArrayList<>();
+        if (!journalWeldingEntityList.isEmpty())
+            journalWeldingEntityList.clear();
         XComponent xComponent = loadXComponent(JOURNAL_TABLE_PATH,getHiddenAsTemplateProperties());
         XSpreadsheets xSpreadsheets = getSpreadsheets(xComponent);
 
@@ -145,13 +142,13 @@ public class DataExtractor {
                 if(firstCellValue.isEmpty()){
                     emptyRowsCount++;
                 }else{
-                    result.add(getJournalWeldingEntityFromTableRow(startRow,xSpreadsheet));
+                    journalWeldingEntityList.add(getJournalWeldingEntityFromTableRow(startRow,xSpreadsheet));
                     startRow++;
                     emptyRowsCount=0;
                 }
             }
-            System.out.println(result.size()+" journal entities has found.");
-            return result;
+            System.out.println(journalWeldingEntityList.size()+" journal entities has found.");
+            return journalWeldingEntityList;
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
