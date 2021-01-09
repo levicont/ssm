@@ -33,7 +33,7 @@ public class DataExtractorTest {
         assertEquals(firstEntity.getDetailEntities().get(0).getCount(), Integer.valueOf(79));
         assertEquals(firstEntity.getDetailEntities().get(0).getWeightOfMarkKg(), Double.valueOf(73.8));
 
-        ShipmentEntity lastEntity = result.iterator().next();
+        ShipmentEntity lastEntity = result.get(result.size()-1);
         assertEquals(lastEntity.getDate(), LocalDate.of(2020,11,20));
         assertEquals(lastEntity.getTechnicalDrawings(),"СМК 20024 КМД");
         assertEquals(lastEntity.getObjectName(),"Офисно-складской комплекс");

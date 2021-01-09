@@ -62,10 +62,10 @@ public class Saver {
 
    private String getProtocolFileName(){
       if (testReport.getType() == TestReportType.VT)
-         return getProperty("ProtocolVTFilePrefix")+testReport.getNumber().replace('/','-')+"_"+
+         return getProperty("ProtocolVTFilePrefix")+testReport.getFormatNumber(4).replace('/','-')+"_"+
                  Formatter.formatDate(testReport.getDate()).replace('.','-');
       if (testReport.getType() == TestReportType.UT)
-         return getProperty("ProtocolUTFilePrefix")+testReport.getNumber().replace('/','-')+"_"+
+         return getProperty("ProtocolUTFilePrefix")+testReport.getFormatNumber(4).replace('/','-')+"_"+
                  Formatter.formatDate(testReport.getDate()).replace('.','-');
       throw new RuntimeException("Cannot setup file name for storing test report");
    }

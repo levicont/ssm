@@ -71,7 +71,9 @@ public class DataExtractor {
         close(xComponent);
         System.out.println(shipmentEntityList.size()+" shipment entities has found.");
         shipmentEntityList.sort(Comparator.comparing(ShipmentEntity::getDate));
-        return shipmentEntityList;
+        List<ShipmentEntity> result = filterShipmentEntitiesByKMD(shipmentEntityList);
+        analiseShipmentEntities(result);
+        return result;
     }
 
     public static List<ShipmentEntity> getFilteredShipmentEntities(Double minWeightOfMark){
@@ -156,6 +158,27 @@ public class DataExtractor {
             close(xComponent);
         }
 
+    }
+
+    private static List<ShipmentEntity> filterShipmentEntitiesByKMD(List<ShipmentEntity> shipmentEntities){
+        final String excludeStr = "КЖ";
+        final String excludeStr1 = "КХ";
+
+        return shipmentEntities.stream().filter(shipmentEntity -> {
+            if (shipmentEntity.getTechnicalDrawings().endsWith(excludeStr) ||
+                    shipmentEntity.getTechnicalDrawings().endsWith(excludeStr1)){
+                System.out.println("Excluded: "+shipmentEntity.getShortStringData());
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    private static void analiseShipmentEntities(List<ShipmentEntity> shipmentEntities){
+        shipmentEntityList.forEach(shipmentEntity -> {
+            if (shipmentEntity.getTechnicalDrawings().isEmpty())
+                System.out.println("Shipment Entity without KMD: "+shipmentEntity.getShortStringData());
+        });
     }
 
     private static JournalWeldingEntity getJournalWeldingEntityFromTableRow(int row, XSpreadsheet xSpreadsheet){

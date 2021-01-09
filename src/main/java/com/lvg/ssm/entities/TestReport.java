@@ -89,6 +89,12 @@ public abstract class TestReport {
         return prefix+suffix;
     }
 
+    public String getFormatNumber(int zeroLeadCount){
+        String formatStr = "%0"+zeroLeadCount+"d";
+        String suffix = getNumber().substring(getNumber().indexOf('-'));
+        return String.format(formatStr,getIndex())+suffix;
+    }
+
     public LocalDate getDate() {
         return date;
     }

@@ -27,10 +27,6 @@ public class ShipmentEntity {
         return index;
     }
 
-    public void setIndex(Long index) {
-        this.index = index;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -69,9 +65,12 @@ public class ShipmentEntity {
 
 
     public String getShortStringData(){
-        return index+"\t\t"+date+"\t\t"+technicalDrawings+"\t\t"+shippingShop+"\t\t";
+        return getFormattedNumber()+"\t\t"+date+"\t\t"+technicalDrawings+"\t\t"+shippingShop+"\t\t";
     }
 
+    public String getFormattedNumber(){
+        return String.format("%04d",getIndex());
+    }
     @Override
     public String toString() {
         return  index+"\n"+

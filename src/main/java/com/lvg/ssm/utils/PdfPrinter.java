@@ -56,7 +56,7 @@ public class PdfPrinter {
             checkStoreDirectory(pathToPdfDir);
             return  pathToPdfDir+
                     getProperty("ProtocolVTPdfFilePrefix") +
-                    testReport.getNumber().replace('/', '-') + "_" +
+                    testReport.getFormatNumber(4).replace('/', '-') + "_" +
                     Formatter.formatDate(testReport.getDate()).replace('.', '-') +
                     getProperty("PdfFileSuffix");
         }
@@ -65,7 +65,7 @@ public class PdfPrinter {
             checkStoreDirectory(pathToPdfDir);
             return  pathToPdfDir+
                     getProperty("ProtocolUTPdfFilePrefix")+
-                    testReport.getNumber().replace('/','-')+"_"+
+                    testReport.getFormatNumber(4).replace('/','-')+"_"+
                     Formatter.formatDate(testReport.getDate()).replace('.','-')+
                     getProperty("PdfFileSuffix");
         }
