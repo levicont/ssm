@@ -24,7 +24,7 @@ import java.time.LocalDate;
 /**
  * Created by Victor Levchenko LVG Corp. on 22.11.2020.
  */
-public class OpenOfficeUtils {
+public abstract class OpenOfficeUtils {
     private static final LocalDate DEFAULT_START_DATE = LocalDate.of(1899,12,30);
     public static final String DESKTOP_SERVICE = "com.sun.star.frame.Desktop";
     public static final String BLANK_STR = "_blank";
@@ -113,7 +113,7 @@ public class OpenOfficeUtils {
     public static String getCellTextByPosition(XSpreadsheet xSpreadsheet, int column, int row){
         try {
             XText text = UnoRuntime.queryInterface(XText.class,xSpreadsheet.getCellByPosition(column,row));
-            return text.getString();
+            return text.getString().trim();
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
