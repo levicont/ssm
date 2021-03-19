@@ -10,14 +10,17 @@ public class ApplicationProperties {
     public static final String OPEN_OFFICE_FILE_PATH_PREFIX = "file://";
     public static final String USER_HOME_PATH_PROPERTY_NAME = "user.home";
     public static final String OPEN_OFFICE_PATH_PROPERTY_NAME;
+    public static final Boolean IS_WINDOWS;
 
     static {
         APP_PROPERTIES_URL = Objects.requireNonNull(ApplicationProperties.class
                 .getClassLoader().getResource("app.properties").getPath());
         if (System.getProperty("os.name").equalsIgnoreCase("Linux")){
             OPEN_OFFICE_PATH_PROPERTY_NAME = "OpenOfficeLinuxPath";
+            IS_WINDOWS = Boolean.FALSE;
         }else {
             OPEN_OFFICE_PATH_PROPERTY_NAME = "OpenOfficeWindowsPath";
+            IS_WINDOWS = Boolean.TRUE;
         }
     }
 
@@ -46,4 +49,5 @@ public class ApplicationProperties {
             return systemProperties.getProperty(propertyName);
         throw new RuntimeException("No property with such name: "+propertyName);
     }
+
 }

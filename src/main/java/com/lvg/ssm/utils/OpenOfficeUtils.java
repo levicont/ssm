@@ -21,6 +21,8 @@ import ooo.connector.BootstrapSocketConnector;
 
 import java.time.LocalDate;
 
+import static com.lvg.ssm.utils.ApplicationProperties.IS_WINDOWS;
+
 /**
  * Created by Victor Levchenko LVG Corp. on 22.11.2020.
  */
@@ -175,6 +177,13 @@ public abstract class OpenOfficeUtils {
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
+    }
+
+    public static String getFileNameAccordingOS(String path){
+        if (IS_WINDOWS){
+            return '/'+path.replace('\\','/');
+        }
+        return path;
     }
 
 }

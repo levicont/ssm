@@ -112,6 +112,10 @@ public class Filler {
 
     }
 
+    public void exportPDF(){
+        new Saver(testReport).exportPDF(xSpreadsheetDocument);
+    }
+
 
 
     public void close(){

@@ -40,8 +40,8 @@ public class Generator
                 testReportsVT.forEach(tr ->{
                     Filler filler = new Filler(tr);
                     filler.fillUpReport();
-                    filler.print();
                     filler.save();
+                    filler.exportPDF();
                     filler.close();
                 });
             }
@@ -53,8 +53,8 @@ public class Generator
                 testReportsUT.forEach(tr ->{
                     Filler filler = new Filler(tr);
                     filler.fillUpReport();
-                    filler.print();
                     filler.save();
+                    filler.exportPDF();
                     filler.close();
                 });
 
@@ -63,6 +63,7 @@ public class Generator
 
         }catch (Exception ex){
             System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
         finally {
             OpenOfficeUtils.closeContext();
