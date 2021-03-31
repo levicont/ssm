@@ -19,7 +19,10 @@ public class ApplicationProperties {
             OPEN_OFFICE_PATH_PROPERTY_NAME = "OpenOfficeLinuxPath";
             IS_WINDOWS = Boolean.FALSE;
         }else {
-            OPEN_OFFICE_PATH_PROPERTY_NAME = "OpenOfficeWindowsPath";
+            if (System.getProperty("os.arch").equalsIgnoreCase("amd64"))
+                OPEN_OFFICE_PATH_PROPERTY_NAME = "OpenOfficeWindows64Path";
+            else
+                OPEN_OFFICE_PATH_PROPERTY_NAME = "OpenOfficeWindowsPath";
             IS_WINDOWS = Boolean.TRUE;
         }
     }
